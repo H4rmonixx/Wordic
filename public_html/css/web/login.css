@@ -1,0 +1,29 @@
+#left-side{
+    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/assets/web/login_banner.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+@media (width <= 768px) {
+    #left-side{
+        border-top-right-radius: 0 !important;
+        border-top-left-radius: 0 !important;
+    }
+    #right-side-col{
+        border-bottom-right-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+    }
+    #left-side-col{
+        min-height: 275px;
+    }
+}
+@media (width > 768px) {
+    #left-side{
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+    #right-side-col{
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+    }
+}

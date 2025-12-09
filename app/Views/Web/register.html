@@ -1,0 +1,76 @@
+@section("title")
+Register
+@endsection
+
+@section("styles")
+<link rel="stylesheet" href="/css/web/register.css">
+@endsection
+
+@section("scripts")
+<script src="/js/utils/loadProfileUsername.js"></script>
+<script src="/js/web/register.js"></script>
+@endsection
+
+@section("content")
+<main class="container-xxl px-4 px-xxl-0 py-5 my-5">
+    <div class="mb-4">
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Register</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="order-2 order-md-1 col-md-6 position-relative shadow-sm" id="left-side-col">
+            <div class="position-absolute w-100 h-100 top-0 start-0 rounded" id="left-side">
+                <div class="position-absolute start-0 top-0 w-100 h-100 d-flex justify-content-center align-items-center">
+                    <div class="text-center text-white">
+                        <h1><i class="bi bi-bullseye"></i> Just a few steps</h1>
+                        <div class="mb-3">The best investment is knowledge!</div>
+                        <div>
+                            <a href="/article/2-user-guide" class="btn btn-success">User guide</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="order-1 order-md-2 col-md-6 border shadow-sm rounded" id="right-side-col">
+            <form id="register-form" class="p-3">
+                <fieldset class="mb-3">
+                    <legend class="fs-2 mb-3"><i class="bi bi-box-arrow-in-right"></i> Register to Wordic</legend>
+                    <div class="mb-2">
+                        <label for="register-form-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="register-form-username" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="register-form-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="register-form-email" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="register-form-confirm-email" class="form-label">Confirm Email</label>
+                        <input type="email" class="form-control" id="register-form-confirm-email" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="register-form-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="register-form-password" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="register-form-confirm-password" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="register-form-password" required>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="register-form-terms" required>
+                            <label class="form-check-label" for="register-form-terms">I agree to the <a href="/article/1-terms-of-service" target="_blank">Terms of Service</a> and <a href="/article/3-privacy-policy" target="_blank">Privacy Policy</a>.</label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</main>
+@endsection

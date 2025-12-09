@@ -1,0 +1,15 @@
+.banner {
+    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/assets/web/home_banner.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.card{
+    background-color: rgba(200,200,200,0.25);
+}
+.card .card-body{
+    transition: transform 0.3s ease;
+}
+.card:hover .card-body{
+    transform: translateY(7px) translateX(5px);
+}

@@ -1,0 +1,139 @@
+@section("title")
+Wordic
+@endsection
+
+@section("styles")
+<link rel="stylesheet" href="/css/web/index.css">
+@endsection
+
+@section("scripts")
+<script src="/js/utils/loadProfileUsername.js"></script>
+<script>
+    $(document).ready(function() {
+        loadProfileUsername();
+    });
+</script>
+@endsection
+
+@section("content")
+<section class="banner py-5">
+  <div class="container-xxl px-4 px-xxl-0 py-5 text-center text-white">
+    <h1 class="display-4 fw-bold">Learn vocabulary faster and more effectively</h1>
+    <p class="lead mt-3 mb-4">Create your own sets, use flashcards and quizzes – learn languages your way.</p>
+    <a href="/register" class="btn btn-lg btn-primary px-5 py-3 fw-semibold">Get started for free</a>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container-xxl px-4 px-xxl-0 text-center">
+    <h2 class="fw-bold mb-5">Why Wordic?</h2>
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <div class="mb-3"><i class="bi bi-book-half fs-1"></i></div>
+        <h5 class="fw-bold">Your own sets</h5>
+        <p>Add words and create collections tailored to your learning style.</p>
+      </div>
+
+      <div class="col-md-4">
+        <div class="mb-3"><i class="bi bi-lightning-fill fs-1 text-warning"></i></div>
+        <h5 class="fw-bold">Flashcards and quick quizzes</h5>
+        <p>Reinforce knowledge with interactive learning tools.</p>
+      </div>
+
+      <div class="col-md-4">
+        <div class="mb-3"><i class="bi bi-bullseye fs-1 text-danger"></i></div>
+        <h5 class="fw-bold">Progress statistics</h5>
+        <p>Track your learning pace and see real results.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="bg-light py-5 border-top border-bottom">
+  <div class="container-xxl px-4 px-xxl-0">
+    <h2 class="fw-bold text-center mb-5">User reviews</h2>
+    
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="p-4 bg-white border border-primary rounded h-100">
+          <p class="fst-italic">„The best tool for learning vocabulary! Flashcards are brilliant.”</p>
+          <h6 class="fw-bold mt-3">— Anna, student</h6>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 bg-white border border-primary rounded h-100">
+          <p class="fst-italic">„Thanks to quizzes, I learn faster than ever before.”</p>
+          <h6 class="fw-bold mt-3">— Michał, teacher</h6>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 bg-white border border-primary rounded h-100">
+          <p class="fst-italic">„Simple, clear, and effective. I recommend it to everyone!”</p>
+          <h6 class="fw-bold mt-3">— Katarzyna, tutor</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container-xxl px-4 px-xxl-0">
+    <h2 class="fw-bold text-center mb-4">Stay Updated with Language Learning Tips</h2>
+    <p class="text-center mb-5">Discover study hacks, language curiosities and updates from the Wordic community. Your daily dose of motivation is just a scroll away.</p>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body h-100 shadow bg-white rounded">
+            <h5 class="card-title fw-bold">5 Tricks to Remember Words Faster</h5>
+            <p class="card-text">
+              Learn proven techniques that help boost your memory and make vocabulary learning more efficient.
+            </p>
+            <a href="#" class="stretched-link">Read more</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body h-100 shadow bg-white rounded">
+            <h5 class="card-title fw-bold">Word of the Day: Discover New Expressions</h5>
+            <p class="card-text">
+              Expand your vocabulary daily with interesting words and their real-life usage examples.
+            </p>
+            <a href="#" class="stretched-link">Read more</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100">
+          <div class="card-body h-100 shadow bg-white rounded">
+            <h5 class="card-title fw-bold">Community Highlights & Updates</h5>
+            <p class="card-text">
+              See how other learners use Wordic, get inspired, and never miss out on new features.
+            </p>
+            <a href="#" class="stretched-link">Read more</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <a href="/articles" class="btn btn-outline-primary px-4 py-2 fw-semibold">
+        Visit the News Feed
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="py-5 bg-light border-top">
+  <div class="container-xxl px-4 px-xxl-0 py-4 text-center">
+    <h2 class="fw-bold mb-3">Ready to start learning?</h2>
+    <p class="mb-4">Create a free account and see how quickly you can expand your vocabulary.</p>
+    <a href="#" class="btn btn-lg btn-primary px-5 py-3 fw-semibold">Register now</a>
+  </div>
+</section>
+@endsection
