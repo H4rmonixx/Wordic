@@ -1,0 +1,82 @@
+@section("title")
+Dashboard
+@endsection
+
+@section("styles")
+<link rel="stylesheet" href="/css/web/dashboard.css">
+@endsection
+
+@section("scripts")
+<script src="/js/utils/loadProfileUsername.js"></script>
+<script src="/js/web/dashboard.js"></script>
+@endsection
+
+@section("content")
+<main class="container-xxl px-3 px-xxl-0 py-4 my-5">
+    <div class="mb-4">
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title mb-2"><i class="bi bi-archive"></i> My sets</h1>
+            <p class="card-text">Here you can manage your vocabulary sets and use them freely.</p>
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card h-100 text-center text-secondary border-dashed bg-light set-card" id="new-set">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <i class="bi bi-plus-lg fs-1 mb-2"></i>
+                            <h5 class="card-title">Create new set</h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- -->
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title mb-2"><i class="bi bi-globe"></i> Public sets of others</h1>
+            <p class="card-text">Vocabulary sets shared by other users.</p>
+            <form id="form-search-public">
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" id="form-search-public-input" placeholder="Creator, category, title...">
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card h-100 text-center text-secondary border-dashed bg-light set-card">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <i class="bi bi-plus-lg fs-1 mb-2"></i>
+                            <h5 class="card-title">Create new set</h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- -->
+            </div>
+            <nav class="d-flex justify-content-end">
+                <ul class="pagination">
+                    <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</main>
+@endsection

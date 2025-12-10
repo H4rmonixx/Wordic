@@ -10,26 +10,30 @@ class Database {
     private static bool $transactionActive = false;
 
     // INITIALIZATION
-    public static function init(): void {
+    public static function init(): bool {
         if (self::$pdo === null) {
             $config = require __DIR__ . '/config.php';
             $db = $config['db'];
 
             try {
-                self::$pdo = new PDO("mysql:host={$db['host']};dbname={$db['name']}", $db['user'], $db['pass'], [
+                self::$pdo = new PDO('mysql:host='.$db['host'].';dbname='.$db['name'], $db['user'], $db['password'], [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 ]);
             } catch (PDOException $e) {
-                die("Error while connecting to database!" . $e->getMessage());
+                echo json_encode(["success" => false, "message" => "Error while connecting to database!" . $e->getMessage()]);
+                return false;
             }
         }
+        return true;
     }
 
     // TRANSACTION MANAGEMENT
     public static function startTransaction(): bool {
         if (self::$pdo === null) {
-            self::init();
+            if (!self::init()) {
+                return false;
+            }
         }
 
         if (self::$transactionActive) {
@@ -84,9 +88,11 @@ class Database {
 
     public static function getConnection(): ?PDO {
         if (self::$pdo === null) {
-            self::init();
-            self::$transactionActive = false;
+            if (!self::init()) {
+                return null;
+            }
         }
+        self::$transactionActive = false;
         return self::$pdo;
     }
     

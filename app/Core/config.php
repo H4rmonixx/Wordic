@@ -4,7 +4,7 @@ return [
         'host' => 'localhost',
         'name' => 'wordic',
         'user' => 'root',
-        'pass' => ''
+        'password' => ''
     ],
     'phpmailer' => [
         'smtp_host'        => '',

@@ -12,10 +12,12 @@ header .navbar-toggler{
 .profile-link div{
     font-size: 80%;
 }
-
 footer{
     background-color: #07070A;
 }
+
+
+
 
 .letter-spacing-1 {
     letter-spacing: 0.1em;
@@ -23,6 +25,7 @@ footer{
 .letter-spacing-2 {
     letter-spacing: 0.2em;
 }
+
 
 .underline-animation {
     position: relative;

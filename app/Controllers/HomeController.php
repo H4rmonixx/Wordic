@@ -10,8 +10,13 @@ use App\Core\LayoutEngine;
 
 class HomeController {
     
-    public function index(Request $request) : bool {
+    public function pageIndex(Request $request) : bool {
         echo LayoutEngine::resolveWebLayout('index.html');
+        return true;
+    }
+
+    public function pageDashboard(Request $request) : bool {
+        echo LayoutEngine::resolveWebLayout('dashboard.html');
         return true;
     }
     

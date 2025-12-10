@@ -20,22 +20,27 @@ use App\Middleware\GuestAuthMiddleware;
 
 $router = new Router();
 
+// ErrorController
 $router->get('/errors/{error_code}', [ErrorController::class, 'show'], [
     // No middleware for the error page
 ]);
 
-$router->get('/', [HomeController::class, 'index'], [
+// HomeController
+$router->get('/', [HomeController::class, 'pageIndex'], [
     // No middleware for the home page
 ]);
-
-$router->get('/login', [UserController::class, 'login'], [
-    GuestAuthMiddleware::class
-]);
-$router->get('/register', [UserController::class, 'register'], [
-    GuestAuthMiddleware::class
+$router->get('/dashboard', [HomeController::class, 'pageDashboard'], [
+    UserAuthMiddleware::class
 ]);
 
-$router->get('/profile', [UserController::class, 'profile'], [
+// UserController
+$router->get('/login', [UserController::class, 'pageLogin'], [
+    GuestAuthMiddleware::class
+]);
+$router->get('/register', [UserController::class, 'pageRegister'], [
+    GuestAuthMiddleware::class
+]);
+$router->get('/profile', [UserController::class, 'pageProfile'], [
     UserAuthMiddleware::class
 ]);
 
