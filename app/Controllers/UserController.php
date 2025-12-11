@@ -40,7 +40,7 @@ class UserController {
 
         $user_id = $request->param('user_id');
         if($user_id === null){
-            echo json_encode(['username' => ""]);
+            echo json_encode(["success" => false, 'username' => "", 'message' => 'User ID is required']);
             return true;
         }
 
@@ -48,15 +48,15 @@ class UserController {
         if($user_id == 'current'){
             if (session_status() === PHP_SESSION_NONE) session_start();
             if(!isset($_SESSION['user'])){
-                echo json_encode(['username' => ""]);
+                echo json_encode(["success" => false, 'username' => "", 'message' => 'No user logged in']);
                 return true;
             }
-            echo json_encode(['username' => $_SESSION['user']['username']]);
+            echo json_encode(["success" => true, 'username' => $_SESSION['user']['username'], 'message' => '']);
             return true;
         }
         
         // Specific user
-        echo json_encode(['username' => "user_" . htmlspecialchars($user_id)]);
+        echo json_encode(["success" => true, 'username' => "user_" . htmlspecialchars($user_id), 'message' => '']);
         return true;
     }
 

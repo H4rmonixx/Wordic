@@ -33,6 +33,7 @@ $(document).ready(function() {
             console.log('Error trying to login:', error);
             showAlert('Error trying to login', 'danger');
         });
+        
     });
 
 });

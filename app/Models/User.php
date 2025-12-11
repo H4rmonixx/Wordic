@@ -34,7 +34,7 @@ class User {
 
     public static function getByUsername(string $username) : ?User {
         $pdo = Database::getConnection();
-        $stmt = $pdo->prepare("SELECT user_id, username, email, created_at FROM User WHERE username LIKE ?");
+        $stmt = $pdo->prepare("SELECT user_id, username, email, created_at FROM `User` WHERE username LIKE ?");
         $stmt->execute([$username]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -53,7 +53,7 @@ class User {
 
     public static function login(string $username, string $password) : ?User {
         $pdo = Database::getConnection();
-        $stmt = $pdo->prepare("SELECT user_id, username, email, password, created_at FROM User WHERE username LIKE ?");
+        $stmt = $pdo->prepare("SELECT user_id, username, email, password, created_at FROM `User` WHERE username LIKE ?");
         $stmt->execute([$username]);
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
