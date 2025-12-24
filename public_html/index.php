@@ -20,5 +20,6 @@ foreach ($routers as $router) {
 }
 
 // ERROR HANDLER
-header("Location: /errors/" . ErrorController::$err_code);
+$controller = new ErrorController();
+$controller->show($request);
 exit;

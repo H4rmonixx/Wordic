@@ -3,16 +3,24 @@ Dashboard
 @endsection
 
 @section("styles")
-<link rel="stylesheet" href="/css/web/dashboard.css">
+<style>
+    .set-card:hover{
+        outline: 1px solid var(--bs-success);
+    }
+    #new-set:hover{
+        cursor: pointer;
+    }
+</style>
 @endsection
 
 @section("scripts")
 <script src="/js/utils/loadProfileUsername.js"></script>
+<script src="/js/utils/SEO.js"></script>
 <script src="/js/web/dashboard.js"></script>
 @endsection
 
 @section("content")
-<main class="container-xxl px-3 px-xxl-0 py-4 my-5">
+<main class="container-xxl px-2 px-md-3 px-xxl-0 py-4 my-5">
     <div class="mb-4">
         <nav>
             <ol class="breadcrumb">
@@ -22,10 +30,10 @@ Dashboard
         </nav>
     </div>
     <div class="card mb-4">
-        <div class="card-body pb-5">
+        <div class="card-body">
             <h1 class="card-title mb-2"><i class="bi bi-archive"></i> My sets</h1>
             <p class="card-text">Here you can manage your vocabulary sets and use them freely.</p>
-            <div class="row" id="private-sets-container">
+            <div class="row mb-4 g-3" id="private-sets-container">
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="card h-100 text-center text-secondary bg-light set-card" id="new-set">
                         <div class="card-body d-flex flex-column justify-content-center align-items-center">
@@ -43,6 +51,21 @@ Dashboard
                 </div>
                 <!-- -->
             </div>
+            <nav>
+                <ul class="pagination justify-content-end" id="pagination-private">
+                    <li class="page-item" id="pagination-private-prev">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#"><div class="spinner-border spinner-border-sm text-primary"></div></a></li>
+                    <li class="page-item" id="pagination-private-next">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
     <div class="card mb-4">
@@ -55,7 +78,7 @@ Dashboard
                     <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
                 </div>
             </form>
-            <div class="row">
+            <div class="row g-4">
                 <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                     <div class="card h-100 text-center text-secondary border-dashed bg-light set-card">
                         <div class="card-body d-flex flex-column justify-content-center align-items-center">
@@ -115,5 +138,4 @@ Dashboard
         </div>
     </div>
 </div>
-
 @endsection

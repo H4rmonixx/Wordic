@@ -12,8 +12,13 @@ class GuestAuthMiddleware
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if(isset($_SESSION['user'])){
-            header("Location: /dashboard");
-            exit;
+            if($request->method() === 'GET'){
+                header("Location: /dashboard");
+                exit;
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Only guests allowed']);
+                exit;
+            }
         }
 
         return $next($request);

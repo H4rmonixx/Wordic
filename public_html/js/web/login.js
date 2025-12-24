@@ -30,8 +30,13 @@ $(document).ready(function() {
                 $('#login-error-message').text(response.message);
             }
         }).catch(function(error) {
-            console.log('Error trying to login:', error);
-            showAlert('Error trying to login', 'danger');
+            if(error.statusText){
+                console.log('Error trying to login:', error.statusText);
+                showAlert('Error trying to login: ' + error.statusText, 'danger');
+            } else {
+                console.log('Error trying to login:', error);
+                showAlert('Error trying to login: ' + error, 'danger');
+            }
         });
         
     });

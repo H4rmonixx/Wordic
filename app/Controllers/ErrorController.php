@@ -11,16 +11,17 @@ use App\Core\LayoutEngine;
 class ErrorController {
 
     public static int $err_code = 404;
+    public static string $err_msg = 'Something gone wrong.<br>Try again later!';
     public static string $errorPath = __DIR__ . '/../Views/Error/';
 
     public function show(Request $request) : bool {
 
-        $err = $request->param('error_code') ?? 404;
-        http_response_code($err);
-        if(file_exists(self::$errorPath . $err . ".html")) $filename = $err.".html";
+        http_response_code(self::$err_code);
+
+        if(file_exists(self::$errorPath . self::$err_code . ".html")) $filename = self::$err_code.".html";
         else $filename = "default.html";
 
-        echo LayoutEngine::resolveErrorLayout($filename, ['ERROR_CODE' => $err]);
+        echo LayoutEngine::resolveErrorLayout($filename, ['ERROR_CODE' => self::$err_code, 'ERROR_MSG' => self::$err_msg]);
 
         return true;
     }

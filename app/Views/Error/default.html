@@ -14,16 +14,15 @@
 <main class="container-xxl px-4 px-xxl-0 d-flex align-items-center justify-content-center">
     <div class="text-center border p-4 shadow rounded">
         <h1 class="display-1 fw-bold text-danger">{{ERROR_CODE}}</h1>
-        <p class="fs-3 mt-3">Wystąpił nieoczekiwany błąd</p>
+        <p class="fs-3 mt-3">Unexpected error occurred</p>
         <p class="text-muted">
-            Przepraszamy, ale coś poszło nie tak.<br>
-            Spróbuj ponownie później lub wróć na stronę główną.
+            {{ERROR_MSG}}
         </p>
         <a href="/" class="btn btn-primary btn-lg mt-3">
-            Wróć na stronę główną
+            Return to homepage
         </a>
         <div class="mt-4">
-            <small class="text-muted">Jeśli problem się powtarza — skontaktuj się z administratorem.</small>
+            <small class="text-muted">If the error is repeating, please contact the administrator.</small>
         </div>
     </div>
 </main>

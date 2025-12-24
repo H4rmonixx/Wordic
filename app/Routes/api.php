@@ -5,14 +5,20 @@ require_once __DIR__ . '/../Core/Router.php';
 require_once __DIR__ . '/../Controllers/UserController.php';
 require_once __DIR__ . '/../Controllers/SetController.php';
 
-require_once __DIR__ . '/../Middleware/APIUserAuthMiddleware.php';
+require_once __DIR__ . '/../Middleware/UserAuthMiddleware.php';
+require_once __DIR__ . '/../Middleware/RetrieveIDMiddleware.php';
+require_once __DIR__ . '/../Middleware/SetOwnerOrPublicAuthMiddleware.php';
+require_once __DIR__ . '/../Middleware/SetOwnerAuthMiddleware.php';
 
 use App\Core\Router;
 
 use App\Controllers\UserController;
 use App\Controllers\SetController;
 
-use App\Middleware\APIUserAuthMiddleware;
+use App\Middleware\UserAuthMiddleware;
+use App\Middleware\RetrieveIDMiddleware;
+use App\Middleware\SetOwnerOrPublicAuthMiddleware;
+use App\Middleware\SetOwnerAuthMiddleware;
 
 $router = new Router();
 
@@ -20,16 +26,45 @@ $router = new Router();
 $router->post('/login/try', [UserController::class, 'login'], [
     // No middleware
 ]);
-$router->post('/user/{user_id}/username', [UserController::class, 'getUsername'], [
-    // No middleware
+$router->post('/user/{code}/username', [UserController::class, 'getUsername'], [
+    RetrieveIDMiddleware::class
 ]);
 
 // SetController
-$router->post('/user/{user_id}/sets', [SetController::class, 'getUserSets'], [
-    APIUserAuthMiddleware::class
+$router->post('/user/{code}/sets', [SetController::class, 'getUserSets'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class
 ]);
-$router->post('/set/{set_id}/words', [SetController::class, 'getSetWords'], [
-    APIUserAuthMiddleware::class
+$router->post('/user/{code}/sets/count', [SetController::class, 'getUserSetsCount'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class
+]);
+$router->post('/set/{code}/info', [SetController::class, 'getSetInfo'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerOrPublicAuthMiddleware::class
+]);
+$router->post('/set/{code}/words', [SetController::class, 'getSetWords'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerOrPublicAuthMiddleware::class
+]);
+
+
+$router->post('/set/{code}/edit/info', [SetController::class, 'editInfo'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerAuthMiddleware::class
+]);
+$router->post('/set/{code}/edit/image', [SetController::class, 'editImage'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerAuthMiddleware::class
+]);
+$router->post('/set/{code}/edit/words', [SetController::class, 'editWords'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerAuthMiddleware::class
 ]);
 
 return $router;

@@ -46,3 +46,8 @@ footer{
     transform: scaleX(1);
     transform-origin: bottom left;
 }
+
+.loading-mask{
+    background-color: rgba(230,230,230,.8);
+    z-index: 100;
+}

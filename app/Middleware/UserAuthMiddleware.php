@@ -12,8 +12,13 @@ class UserAuthMiddleware
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if(!isset($_SESSION['user'])){
-            header("Location: /login");
-            exit;
+            if($request->method() === 'GET'){
+                header("Location: /login");
+                exit;
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+                exit;
+            }
         }
 
         return $next($request);

@@ -24,6 +24,7 @@ class Database {
                 echo json_encode(["success" => false, "message" => "Error while connecting to database!" . $e->getMessage()]);
                 return false;
             }
+
         }
         return true;
     }
@@ -92,7 +93,7 @@ class Database {
                 return null;
             }
         }
-        self::$transactionActive = false;
+
         return self::$pdo;
     }
     
