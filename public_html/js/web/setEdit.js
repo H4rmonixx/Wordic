@@ -1,5 +1,9 @@
+const setCode = SEO.getCodeAfter("set");
+
+let dataFromCsv = [];
+
 function loadSet(){
-    const setCode = SEO.getCodeAfter("set");
+    
     if(setCode == null) return new Promise((resolve, reject) => {reject("No set ID");});
 
     return $.ajax({
@@ -11,17 +15,16 @@ function loadSet(){
 
             $('.loading-mask[data-mask="info"]').remove();
 
-            $(document).prop("title", response.info.name);
+            $(document).prop("title", `Edit: ${response.info.name}`);
             $("#breadcrumb-set-name").text(response.info.name);
-            $("#breadcrumb-set-name").prop("href", `/set/${SEO.createCode(response.info.set_id, response.info.name)}`);
+            $("#breadcrumb-set-name").prop("href", `/set/${setCode}`);
 
             $("#form-settings-name").val(response.info.name);
             $("#form-settings-description").text(response.info.description);
             $("#form-settings-public").prop("checked", response.info.public);
-
-            if(response.info.image_name){
-                $("#set-image").prop("src", response.info.image_path);
-            }
+            
+            if(response.info.image_name == null) response.info.image_path += 'default.jpg';
+            $("#set-image").prop("src", response.info.image_path);
 
         } else {
             return $.Deferred().reject(response.message);
@@ -30,7 +33,7 @@ function loadSet(){
 }
 
 function loadWords(){
-    const setCode = SEO.getCodeAfter("set");
+
     if(setCode == null) return new Promise((resolve, reject) => {reject("No set ID");});
 
     return $.ajax({
@@ -84,7 +87,7 @@ function markWordsUnsaved(){
 function reindexWords(){
     let index = 0;
     $(".word-index").each(function(){
-        $(this).text(index + 1);
+        $(this).text(index);
         index++;
     });
 }
@@ -111,7 +114,6 @@ $(document).ready(function() {
         formData.append("description", $("#form-settings-description").val());
         formData.append("public", $("#form-settings-public").prop("checked") ? 1 : 0);
 
-        const setCode = SEO.getCodeAfter("set");
         if(setCode == null){
             showAlert('No set ID', 'danger');
             return;
@@ -257,7 +259,6 @@ $(document).ready(function() {
 
     $("#words-save-btn").on("click", function(){
 
-        const setCode = SEO.getCodeAfter("set");
         if(setCode == null){
             showAlert('No set ID', 'danger');
             return;
@@ -318,6 +319,124 @@ $(document).ready(function() {
         $(this).closest("tr").remove();
         markWordsUnsaved();
         reindexWords();
+    });
+
+    $("#btn-delete-set").on("click", function(){
+        bootstrap.Modal.getOrCreateInstance($("#modal-delete-set")).show();
+    });
+
+    $("#btn-accept-delete-set").on("click", function(){
+        
+        if(setCode == null){
+            showAlert('No set ID', 'danger');
+            return;
+        }
+
+        const button = this;
+        $(button).find(".btn-text").toggleClass("d-none");
+        $(button).find(".btn-spinner").toggleClass("d-none");
+        $(button).prop("disabled", true);
+
+        $.ajax({
+            url: `/set/${setCode}/delete`,
+            method: 'post',
+            dataType: 'json'
+        }).then(function(response){
+            if(response.success){
+
+                $(button).find(".btn-text").toggleClass("d-none");
+                $(button).find(".btn-spinner").toggleClass("d-none");
+                $(button).prop("disabled", false);
+
+                window.location.href = `/dashboard`;
+                
+            } else {
+                return $.Deferred().reject(response.message);
+            }
+        }).catch(function(error) {
+            $(button).find(".btn-text").toggleClass("d-none");
+            $(button).find(".btn-spinner").toggleClass("d-none");
+            $(button).prop("disabled", false);
+            if(error.statusText){
+                console.log('Error trying to delete set:', error.statusText);
+                showAlert('Error trying to delete set: ' + error.statusText, 'danger');
+            } else {
+                console.log('Error trying to delete set:', error);
+                showAlert('Error trying to delete set: ' + error, 'danger');
+            }
+        });
+
+    });
+
+    $("#words-import-file").on("change", function(){
+
+        if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+            showAlert('The File APIs are not fully supported in this browser.', 'danger');
+            return;
+        }
+
+        const file = this.files[0];
+        if(!file) return;
+
+        const button = $("#words-import-file-btn");
+        const input = this;
+        $(button).find(".btn-text").addClass("d-none");
+        $(button).find(".btn-spinner").removeClass("d-none");
+        $(input).prop("disabled", true);
+
+        $("#modal-words-import .modal-title .fst-italic").text(file.name);
+
+        Papa.parse(file, {
+            skipEmptyLines: true,
+            complete: function(results) {
+
+                $(button).find(".btn-text").removeClass("d-none");
+                $(button).find(".btn-spinner").addClass("d-none");
+                $(input).prop("disabled", false);
+
+                dataFromCsv = [];
+
+                $("#modal-words-import-tbody").empty();
+
+                results.data.forEach((row, index) => {
+                    const term = row[0];
+                    const definition = row[1];
+
+                    if(term && definition){
+                        dataFromCsv.push({ term: term.trim(), definition: definition.trim() });
+                        $("#modal-words-import-tbody").append($(
+                            `<tr>
+                                <td>${index + 1}</td>
+                                <td>${term.trim()}</td>
+                                <td>${definition.trim()}</td>
+                            </tr>`
+                        ));
+                    }
+
+                });
+                bootstrap.Modal.getOrCreateInstance($("#modal-words-import")).show();
+            },
+            error: function(err) {
+
+                $(button).find(".btn-text").removeClass("d-none");
+                $(button).find(".btn-spinner").addClass("d-none");
+                $(input).prop("disabled", false);
+                showAlert('Error parsing CSV file: ' + err.message, 'danger');
+
+            }
+        });
+        $(this).val('');
+    });
+
+    $("#modal-words-import-accept").on("click", function(){
+        dataFromCsv.forEach((word) => {
+            const lastIndex = parseInt($(".word-index:last").text());
+            $("#words-tbody").append(createWordTr(word.term, word.definition, lastIndex));
+        });
+        markWordsUnsaved();
+        dataFromCsv = [];
+        $("#modal-words-import-tbody").empty();
+        bootstrap.Modal.getOrCreateInstance($("#modal-words-import")).hide();
     });
 
 });

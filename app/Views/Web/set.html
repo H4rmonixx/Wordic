@@ -4,25 +4,21 @@ Loading...
 
 @section("styles")
 <style>
-    .card > .card-bg{
+    .card > #card-bg{
         background-size: cover;
     }
-    .card > .card-bg::after{
+    .card > #card-bg::after{
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
         height: 100%;
         content: "";
-        background-color: rgba(255,255,255,.8);
-    }
-    .set-card{
-        text-decoration: none;
+        background-color: rgba(255,255,255,.6);
     }
     .set-card:hover{
         cursor: pointer;
         outline: 1px solid var(--bs-success);
-        
     }
 </style>
 @endsection
@@ -48,77 +44,139 @@ Loading...
     </div>
     <div class="row g-3 mb-4">
         <div class="col-lg-7">
-            <div class="card position-relative h-100 overflow-hidden">
+            <div class="card position-relative overflow-hidden">
                 <div class="position-absolute top-0 start-0 w-100 h-100 d-flex column-gap-2 justify-content-center align-items-center loading-mask" data-mask="info">
                     <div class="spinner-border"></div>
                     <div>Loading</div>
                 </div>
-                <div class="card-bg position-absolute top-0 start-0 w-100 h-100 z-1 d-lg-none"></div>
+                <div id="card-bg" class="position-absolute top-0 start-0 w-100 h-100 z-1 d-lg-none"></div>
                 <div class="card-body z-2">
-                    <h3 class="card-title text-success"><i class="bi bi-book-half"></i> <span id="set-name"></span></h3>
+                    <div class="card-title d-flex justify-content-between align-items-center gap-3">
+                        <h3 class="text-success"><i class="bi bi-book-half"></i> <span id="set-name"></span></h3>
+                        <div class="dropdown">
+                            <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">Options</button>
+                            <ul class="dropdown-menu">
+                                <li><button class="dropdown-item" id="btn-reset-progress"><i class="bi bi-arrow-clockwise"></i>Reset progress</button></li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="card-text fst-italic" id="set-description"></div>
                     <div class="card-text fst-italic">
                         <span class="fw-bold">Author:</span>
-                        <a class="link-dark" href="" id="set-author">test</a>
+                        <a class="link-dark" href="" id="set-author"></a>
                     </div>
                     <div class="my-4">
                         <form id="form-play">
                             <label for="form-play-game" class="form-label">Revision mode:</label>
                             <div class="input-group">
                                 <select id="form-play-game" class="form-control" required>
-                                    <option value="fishcards">Fishcards</option>
+                                    <option value="flashcards" selected>Flashcards</option>
+                                    <option value="quiz">Quiz</option>
                                     <option value="quiz-abcd">Quiz ABCD</option>
                                 </select>
                                 <button class="btn btn-primary" type="submit"><i class="bi bi-play"></i> Play</button>
                             </div>
                         </form>
                     </div>
-                    <div class="d-flex align-items-center flex-wrap gap-2">
-                        <button class="btn btn-sm btn-info"><i class="bi bi-eye-fill"></i> Words</button>
-                        <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-info" id="btn-preview"><i class="bi bi-eye-fill"></i> Words</button>
+                            <button class="btn btn-warning btn-sm" id="btn-edit"><i class="bi bi-pencil-fill"></i> Edit</button>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="swap-words">
+                            <label class="form-check-label" for="swap-words">Swap words</label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="d-none d-lg-block col-lg-5">
             <div class="position-relative">
-                <img src="/assets/placeholder.svg" alt="set image" class="set-img w-100 rounded border border-black">
+                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex column-gap-2 justify-content-center align-items-center loading-mask" data-mask="info">
+                    <div class="spinner-border"></div>
+                    <div>Loading</div>
+                </div>
+                <img src="/assets/placeholder.svg" alt="set image" id="set-img" class="w-100 rounded border border-black">
             </div>
         </div>
     </div>
-    <div class="border p-3 rounded bg-light position-relative">
-        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex column-gap-2 justify-content-center align-items-center loading-mask" data-mask="related">
-            <div class="spinner-border"></div>
-            <div>Loading</div>
-        </div>
+    <div class="position-relative">
         <h4 class="mb-3 text-info"><i class="bi bi-card-text"></i> Sets of this author:</h4>
-        <div class="row g-3">
+        <div class="row g-3 mb-3" id="author-sets">
             <div class="col-sm-6 col-md-4 col-lg-3">
-                <a class="card h-100 text-center text-black set-card" href="">
-                    <img class="card-img-top" alt="Set Image">
+                <div class="card h-100 text-center text-secondary">
                     <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                        <h5 class="card-title">test</h5>
-                        <p class="card-text mb-4">desc</p>
+                        <div class="spinner-border text-black"></div>
+                        <div>Loading</div>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
+        <nav>
+            <ul class="pagination justify-content-end" id="pagination-author">
+                <li class="page-item" id="pagination-author-prev">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#"><div class="spinner-border spinner-border-sm text-primary"></div></a></li>
+                <li class="page-item" id="pagination-author-next">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </main>
 
-<!-- Modal set preview -->
-<div class="modal fade" id="modal-set-preview" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+<!-- Modal words preview -->
+<div class="modal fade" id="modal-words-preview" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">Title</h1>
+                <h1 class="modal-title fs-5"><span class="fw-bold"></span> Words in set</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Word</th>
+                            <th scope="col">Definition</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-words-preview-tbody">
+                        <!-- -->
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal reset progress -->
+<div class="modal fade" id="modal-reset-progress" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reset your progress in this set?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" id="btn-accept-reset">
+                    <div class="btn-text">Yes</div>
+                    <div class="btn-spinner spinner-border spinner-border-sm d-none"></div>
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

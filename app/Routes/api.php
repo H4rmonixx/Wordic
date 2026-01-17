@@ -39,6 +39,14 @@ $router->post('/user/{code}/sets/count', [SetController::class, 'getUserSetsCoun
     UserAuthMiddleware::class,
     RetrieveIDMiddleware::class
 ]);
+$router->post('/set/new', [SetController::class, 'createNewSet'], [
+    UserAuthMiddleware::class
+]);
+$router->post('/set/{code}/delete', [SetController::class, 'deleteSet'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerAuthMiddleware::class
+]);
 $router->post('/set/{code}/info', [SetController::class, 'getSetInfo'], [
     UserAuthMiddleware::class,
     RetrieveIDMiddleware::class,
@@ -48,6 +56,21 @@ $router->post('/set/{code}/words', [SetController::class, 'getSetWords'], [
     UserAuthMiddleware::class,
     RetrieveIDMiddleware::class,
     SetOwnerOrPublicAuthMiddleware::class
+]);
+$router->post('/set/{code}/words/rehearse', [SetController::class, 'getSetWordsToRehearse'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerOrPublicAuthMiddleware::class
+]);
+$router->post('/set/{code}/nearest-review-date', [SetController::class, 'getNearestReviewDate'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerOrPublicAuthMiddleware::class
+]);
+$router->post('/set/{code}/reset/progress', [SetController::class, 'resetProgress'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerAuthMiddleware::class
 ]);
 
 
@@ -65,6 +88,11 @@ $router->post('/set/{code}/edit/words', [SetController::class, 'editWords'], [
     UserAuthMiddleware::class,
     RetrieveIDMiddleware::class,
     SetOwnerAuthMiddleware::class
+]);
+
+$router->post('/word/{code}/update/progress', [SetController::class, 'updateWordProgress'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
 ]);
 
 return $router;

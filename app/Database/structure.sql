@@ -3,6 +3,7 @@ USE wordic;
 DROP TABLE IF EXISTS `Word`;
 DROP TABLE IF EXISTS `Set`;
 DROP TABLE IF EXISTS `User`;
+DROP TABLE IF EXISTS `WordProgress`;
 
 CREATE TABLE `User` (
     `user_id` int NOT NULL AUTO_INCREMENT,
@@ -24,7 +25,8 @@ CREATE TABLE `Set` (
     `public` boolean NOT NULL DEFAULT FALSE,
     `image_name` varchar(255) DEFAULT NULL,
     PRIMARY KEY (`set_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE
+    FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE,
+    UNIQUE KEY `name_unique` (`name`)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `Word` (
@@ -35,4 +37,14 @@ CREATE TABLE `Word` (
     PRIMARY KEY (`word_id`),
     FOREIGN KEY (`set_id`) REFERENCES `Set` (`set_id`) ON DELETE CASCADE,
     UNIQUE KEY `term_definition_unique` (`term`, `definition`)
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `WordProgress` (
+    `user_id` int NOT NULL,
+    `word_id` int NOT NULL,
+    `repetition` int NOT NULL DEFAULT 0,
+    `next_review` datetime NOT NULL,
+    PRIMARY KEY (`user_id`, `word_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`word_id`) REFERENCES `Word` (`word_id`) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

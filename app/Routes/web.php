@@ -62,5 +62,10 @@ $router->get('/set/{code}/edit', [SetController::class, 'pageSetEdit'], [
     RetrieveIDMiddleware::class,
     SetOwnerAuthMiddleware::class
 ]);
+$router->get('/set/{code}/flashcards', [SetController::class, 'pageSetFlashcards'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerOrPublicAuthMiddleware::class
+]);
 
 return $router;

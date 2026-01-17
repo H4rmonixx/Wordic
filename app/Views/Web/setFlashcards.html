@@ -1,0 +1,93 @@
+@section("title")
+Loading...
+@endsection
+
+@section("styles")
+<link rel="stylesheet" href="/css/web/setFlashcards.css">
+@endsection
+
+@section("scripts")
+<script src="/js/utils/loadProfileUsername.js"></script>
+<script src="/js/utils/SEO.js"></script>
+<script src="/js/web/setFlashcards.js"></script>
+@endsection
+
+@section("content")
+<main class="container-xxl px-2 px-md-3 px-xxl-0 py-4 my-5">
+    <div class="mb-4">
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item">
+                    <a href="" id="breadcrumb-set-name">
+                        <div class="spinner-border spinner-border-sm"></div>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Fishcards</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="card" id="game-interface">
+        <div class="card-body position-relative">
+            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex column-gap-2 justify-content-center align-items-center loading-mask" data-mask="info">
+                <div class="spinner-border"></div>
+                <div>Loading</div>
+            </div>
+            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex column-gap-2 justify-content-center align-items-center mask bg-white rounded border border-success d-none" data-mask="end">
+                <div>
+                    <h2><i class="bi bi-cake-fill text-success"></i> Congratulations!</h2>
+                    <p>You've got through entire learning session</p>
+                    <p>Current rehearsal accuracy: <span class="fw-bold accuration-words-number">0</span>%</p>
+                    <p class="text-end p-1 fst-italic bg-warning rounded">
+                        Nearest available revision: <span id="nearest-revision"><span class="spinner-border spinner-border-sm"></span></span>
+                    </p>
+                    <div class="d-flex justify-content-end align-items-center column-gap-3 flex-wrap my-2">
+                        <a href="" class="btn btn-sm text-decoration-underline" id="btn-next"><i class="bi bi-patch-plus"></i> Do again</a>
+                        <a href="" class="btn btn-sm btn-primary" id="btn-end-exit"><i class="bi bi-box-arrow-left"></i> Exit</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-title d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                <h3>Total words: <span id="words-number">0</span></h3>
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <div class="rounded p-2" id="rehearse-words"><i class="bi bi-arrow-repeat"></i> To rehearse: <span id="rehearse-words-number" class="fw-bold">0</span></div>
+                    <div class="rounded p-2 me-3" id="accuration-words"><i class="bi bi-bullseye"></i> Accuration: <span class="fw-bold accuration-words-number">0</span>%</div>
+                    <button class="btn btn-outline-secondary fs-5" id="btn-fullscreen"><i class="bi bi-arrows-fullscreen"></i></button>
+                    <a class="btn btn-warning fs-5" id="btn-exit"><i class="bi bi-x-lg"></i></a>
+                </div>
+            </div>
+            <div class="flip-card mb-4">
+                <input type="checkbox" class="visually-hidden" id="flip-card-checkbox">
+                <label class="flip-card-inner rounded" for="flip-card-checkbox">
+                    <div class="flip-card-front bg-light border rounded d-flex justify-content-center align-items-center">
+                        <span class="fs-3" id="word-card-foreign">-</span>
+                    </div>
+                    <div class="flip-card-back bg-light border rounded d-flex justify-content-center align-items-center">
+                        <span class="fs-3" id="word-card-native">-</span>
+                    </div>
+                </label>
+            </div>
+            <div class="d-flex gap-2 justify-content-center mb-5">
+                <button class="btn btn-success" id="known-button">
+                    <div class="btn-text"><i class="bi bi-check-lg"></i> I know</div>
+                    <div class="btn-spinner spinner-border spinner-border-sm d-none"></div>
+                </button>
+                <button class="btn btn-danger" id="foreign-button">
+                    <div class="btn-text"><i class="bi bi-ban"></i> I don't know</div>
+                    <div class="btn-spinner spinner-border spinner-border-sm d-none"></div>
+                </button>
+            </div>
+            <div class="disclaimer d-none">
+                <div class="d-flex justify-content-center fs-5 column-gap-3 align-items-center py-5">
+                    <div>Flashcards by</div>
+                    <div class="d-flex column-gap-1 align-items-center">
+                        <object data="/assets/web/logo.svg" type="image/svg+xml" style="pointer-events: none; width: 25px;"></object>
+                        <strong>Wordic</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+@endsection

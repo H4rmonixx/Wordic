@@ -27,7 +27,6 @@ class RetrieveIDMiddleware
 
         if($code == 'current'){
             $request->setParam("id", $_SESSION['user']['user_id'] ?? null);
-            $request->setParam("public_only", false);
         } else if (preg_match('/^(\d+)(?:-|$)/', $code, $matches)) {
             $id = (int) $matches[1];
             $request->setParam("id", $id);
