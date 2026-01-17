@@ -33,6 +33,11 @@ class SetController {
         return true;
     }
 
+    public function pageSetQuiz(Request $request) : bool {
+        echo LayoutEngine::resolveWebLayout('setQuiz.html');
+        return true;
+    }
+
     public function createNewSet(Request $request) : bool {
         header('Content-Type: application/json');
 
