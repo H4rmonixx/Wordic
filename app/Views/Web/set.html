@@ -24,9 +24,7 @@ Loading...
 @endsection
 
 @section("scripts")
-<script src="/js/utils/loadProfileUsername.js"></script>
-<script src="/js/utils/SEO.js"></script>
-<script src="/js/web/set.js"></script>
+<script src="/js/web/set.js" defer></script>
 @endsection
 
 @section("content")
@@ -54,9 +52,15 @@ Loading...
                     <div class="card-title d-flex justify-content-between align-items-center gap-3">
                         <h3 class="text-success"><i class="bi bi-book-half"></i> <span id="set-name"></span></h3>
                         <div class="dropdown">
-                            <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">Options</button>
-                            <ul class="dropdown-menu">
-                                <li><button class="dropdown-item" id="btn-reset-progress"><i class="bi bi-arrow-clockwise"></i>Reset progress</button></li>
+                            <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">Options</button>
+                            <ul class="dropdown-menu user-select-none">
+                                <li>
+                                    <label class="dropdown-item form-check form-switch d-flex gap-2">
+                                        <input class="form-check-input ms-0 float-none" type="checkbox" role="switch" id="use-progress" checked>
+                                        <div class="form-check-label">Track progress</div>
+                                    </label>
+                                </li>
+                                <li><button class="dropdown-item" id="btn-reset-progress"><i class="bi bi-arrow-clockwise"></i> Reset tracking</button></li>
                             </ul>
                         </div>
                     </div>
@@ -80,7 +84,7 @@ Loading...
                     </div>
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-info" id="btn-preview"><i class="bi bi-eye-fill"></i> Words</button>
+                            <button class="btn btn-sm btn-info" id="btn-preview"><i class="bi bi-eye-fill"></i> Words (<span id="btn-preview-count"></span>)</button>
                             <button class="btn btn-warning btn-sm" id="btn-edit"><i class="bi bi-pencil-fill"></i> Edit</button>
                         </div>
                         <div class="form-check form-switch">

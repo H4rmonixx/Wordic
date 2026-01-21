@@ -89,6 +89,11 @@ $router->post('/set/{code}/edit/words', [SetController::class, 'editWords'], [
     RetrieveIDMiddleware::class,
     SetOwnerAuthMiddleware::class
 ]);
+$router->post('/set/{code}/edit/meta', [SetController::class, 'editMeta'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerOrPublicAuthMiddleware::class
+]);
 
 $router->post('/word/{code}/update/progress', [SetController::class, 'updateWordProgress'], [
     UserAuthMiddleware::class,

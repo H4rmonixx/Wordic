@@ -81,6 +81,7 @@ function loadSet(){
             $("#card-bg").css("background-image", `url("${response.info.image_path}")`);
 
             $("#btn-preview").data("set-name", response.info.name);
+            $("#btn-preview-count").text(response.info.words_count);
 
             if(!response.isOwner){
                 $("#btn-edit").remove();
@@ -89,6 +90,13 @@ function loadSet(){
                     window.location.href = `/set/${setCode}/edit`;
                 });
             }
+
+            if(response.info.meta){
+                $("#use-progress").prop("checked", response.info.meta.track_progress);
+            }
+            $("#use-progress").on("change", function(){
+                updateSetProgress(Number($(this).is(":checked")));
+            });
 
         } else {
             return $.Deferred().reject(response.message);
@@ -182,121 +190,143 @@ function loadAuthorSets(){
     });
 }
 
-$(document).ready(function() {
-    
-    loadProfileUsername();
-
-    loadSet().then(loadAuthorSetsCount).then(loadAuthorSets).then(buildAuthorPagination)
-    .catch(function(error) {
-        if(error.statusText){
-            console.log('Error trying to load set:', error.statusText);
-            showAlert('Error trying to load set: ' + error.statusText, 'danger');
+function updateSetProgress(trackProgress){
+    $("#use-progress").prop("disabled", true);
+    return $.ajax({
+        url: `/set/${setCode}/edit/meta`,
+        method: "POST",
+        dataType: "json",
+        data: JSON.stringify({
+            track_progress: trackProgress
+        })
+    }).then(function(response) {
+        if(response.success) {
+            $("#use-progress").prop("disabled", false);
+            showAlert('Set progress tracking updated successfully.', 'success');
         } else {
-            console.log('Error trying to load set:', error);
-            showAlert('Error trying to load set: ' + error, 'danger');
+            return $.Deferred().reject(response.message);
+        }
+    }).catch(function(error) {
+        $("#use-progress").prop("disabled", false);
+        if(error.statusText){
+            console.log('Error updating set progress tracking:', error.statusText);
+            showAlert('Error updating set progress tracking: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error updating set progress tracking:', error);
+            showAlert('Error updating set progress tracking: ' + error, 'danger');
         }
     });
+}
 
-    $("#pagination-author").on("click", ".page-link[data-page]", function (event) {
-        event.preventDefault();
-        changeAuthorPage(parseInt($(this).data("page")));
-    });
+loadSet().then(loadAuthorSetsCount).then(loadAuthorSets).then(buildAuthorPagination)
+.catch(function(error) {
+    if(error.statusText){
+        console.log('Error trying to load set:', error.statusText);
+        showAlert('Error trying to load set: ' + error.statusText, 'danger');
+    } else {
+        console.log('Error trying to load set:', error);
+        showAlert('Error trying to load set: ' + error, 'danger');
+    }
+});
 
-    $("#pagination-author-next").on("click", function (event) {
-        event.preventDefault();
-        changeAuthorPage(authorPaginationConfig.page + 1);
-    });
+$("#pagination-author").on("click", ".page-link[data-page]", function (event) {
+    event.preventDefault();
+    changeAuthorPage(parseInt($(this).data("page")));
+});
 
-    $("#pagination-author-prev").on("click", function (event) {
-        event.preventDefault();
-        changeAuthorPage(authorPaginationConfig.page - 1);
-    });
+$("#pagination-author-next").on("click", function (event) {
+    event.preventDefault();
+    changeAuthorPage(authorPaginationConfig.page + 1);
+});
 
-    $("#btn-preview").on("click", function(){
-        const setName = $(this).data("set-name");
-        if(setCode == null){
-            showAlert('Error with set ID', 'danger');
-            return;
-        };
+$("#pagination-author-prev").on("click", function (event) {
+    event.preventDefault();
+    changeAuthorPage(authorPaginationConfig.page - 1);
+});
 
-        $("#modal-words-preview").find('.modal-title').find('span').text(setName + ": ");
-        bootstrap.Modal.getOrCreateInstance('#modal-words-preview').show();
-        let $tbody = $("#modal-words-preview-tbody");
-        $tbody.empty().append('<tr><td colspan="3"><div class="d-flex justify-content-center align-items-center gap-2 p-2"><div>Loading</div><div class="spinner-border spinner-border-sm text-black"></div></div></td></tr>');
+$("#btn-preview").on("click", function(){
+    const setName = $(this).data("set-name");
+    if(setCode == null){
+        showAlert('Error with set ID', 'danger');
+        return;
+    };
 
-        $.ajax({
-            url: `/set/${setCode}/words`,
-            method: "POST",
-            dataType: "json"
-        }).then(function(response) {
-            if(response.success) {
+    $("#modal-words-preview").find('.modal-title').find('span').text(setName + ": ");
+    bootstrap.Modal.getOrCreateInstance('#modal-words-preview').show();
+    let $tbody = $("#modal-words-preview-tbody");
+    $tbody.empty().append('<tr><td colspan="3"><div class="d-flex justify-content-center align-items-center gap-2 p-2"><div>Loading</div><div class="spinner-border spinner-border-sm text-black"></div></div></td></tr>');
 
-                $tbody.empty();
+    $.ajax({
+        url: `/set/${setCode}/words`,
+        method: "POST",
+        dataType: "json"
+    }).then(function(response) {
+        if(response.success) {
 
-                if(response.words.length === 0) {
-                    $tbody.append('<tr><td colspan="3" class="text-center">No words in this set.</td></tr>');
-                } else {
-                    response.words.forEach(function(word, index) {
-                        $tbody.append(`<tr><td>${index + 1}</td><td>${word.term}</td><td>${word.definition}</td></tr>`);
-                    });
-                }
-                
+            $tbody.empty();
+
+            if(response.words.length === 0) {
+                $tbody.append('<tr><td colspan="3" class="text-center">No words in this set.</td></tr>');
             } else {
-                bootstrap.Modal.getOrCreateInstance('#modal-words-preview').hide();
-                showAlert(response.message, 'warning');
+                response.words.forEach(function(word, index) {
+                    $tbody.append(`<tr><td>${index + 1}</td><td>${word.term}</td><td>${word.definition}</td></tr>`);
+                });
             }
-        }).catch(function(error) {
+            
+        } else {
             bootstrap.Modal.getOrCreateInstance('#modal-words-preview').hide();
-            if(error.statusText){
-                console.log('Error trying to load set words:', error.statusText);
-                showAlert('Error trying to load set words: ' + error.statusText, 'danger');
-            } else {
-                console.log('Error trying to load set words:', error);
-                showAlert('Error trying to load set words: ' + error, 'danger');
-            }
-        });
+            showAlert(response.message, 'warning');
+        }
+    }).catch(function(error) {
+        bootstrap.Modal.getOrCreateInstance('#modal-words-preview').hide();
+        if(error.statusText){
+            console.log('Error trying to load set words:', error.statusText);
+            showAlert('Error trying to load set words: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error trying to load set words:', error);
+            showAlert('Error trying to load set words: ' + error, 'danger');
+        }
     });
+});
 
-    $("#form-play").on("submit", function(event){
-        event.preventDefault();
-        const game = $("#form-play-game").val();
-        const swapWords = $("#swap-words").is(":checked");
-        window.location.href = `/set/${setCode}/${game}${swapWords ? '?swap=1' : ''}`;
-    });
+$("#form-play").on("submit", function(event){
+    event.preventDefault();
+    const game = $("#form-play-game").val();
+    const swapWords = $("#swap-words").is(":checked");
+    window.location.href = `/set/${setCode}/${game}${swapWords ? '?swap=1' : ''}`;
+});
 
-    $("#btn-reset-progress").on("click", function(){
-        bootstrap.Modal.getOrCreateInstance('#modal-reset-progress').show();
-    });
+$("#btn-reset-progress").on("click", function(){
+    bootstrap.Modal.getOrCreateInstance('#modal-reset-progress').show();
+});
 
-    $("#btn-accept-reset").on("click", function(){
-        const button = this;
-        $(button).prop("disabled", true).find(".btn-text").toggleClass("d-none");
-        $(button).find(".btn-spinner").toggleClass("d-none");
-        $.ajax({
-            url: `/set/${setCode}/reset/progress`,
-            method: "POST",
-            dataType: "json"
-        }).then(function(response) {
-            if(response.success) {
-                $(button).prop("disabled", false).find(".btn-text").toggleClass("d-none");
-                $(button).find(".btn-spinner").toggleClass("d-none");
-                bootstrap.Modal.getOrCreateInstance('#modal-reset-progress').hide();
-                showAlert('Set progress has been reset successfully.', 'success');
-            } else {
-                return $.Deferred().reject(response.message);
-            }
-        }).catch(function(error) {
+$("#btn-accept-reset").on("click", function(){
+    const button = this;
+    $(button).prop("disabled", true).find(".btn-text").toggleClass("d-none");
+    $(button).find(".btn-spinner").toggleClass("d-none");
+    $.ajax({
+        url: `/set/${setCode}/reset/progress`,
+        method: "POST",
+        dataType: "json"
+    }).then(function(response) {
+        if(response.success) {
             $(button).prop("disabled", false).find(".btn-text").toggleClass("d-none");
             $(button).find(".btn-spinner").toggleClass("d-none");
             bootstrap.Modal.getOrCreateInstance('#modal-reset-progress').hide();
-            if(error.statusText){
-                console.log('Error resetting set progress:', error.statusText);
-                showAlert('Error resetting set progress: ' + error.statusText, 'danger');
-            } else {
-                console.log('Error resetting set progress:', error);
-                showAlert('Error resetting set progress: ' + error, 'danger');
-            }
-        });
+            showAlert('Set progress has been reset successfully.', 'success');
+        } else {
+            return $.Deferred().reject(response.message);
+        }
+    }).catch(function(error) {
+        $(button).prop("disabled", false).find(".btn-text").toggleClass("d-none");
+        $(button).find(".btn-spinner").toggleClass("d-none");
+        bootstrap.Modal.getOrCreateInstance('#modal-reset-progress').hide();
+        if(error.statusText){
+            console.log('Error resetting set progress:', error.statusText);
+            showAlert('Error resetting set progress: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error resetting set progress:', error);
+            showAlert('Error resetting set progress: ' + error, 'danger');
+        }
     });
-
 });

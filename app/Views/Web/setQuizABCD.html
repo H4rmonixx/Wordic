@@ -1,5 +1,5 @@
 @section("title")
-Flashcards
+Quiz
 @endsection
 
 @section("styles")
@@ -8,7 +8,7 @@ Flashcards
 
 @section("scripts")
 <script src="/js/utils/Game.js" defer></script>
-<script src="/js/web/setFlashcards.js" defer></script>
+<script src="/js/web/setQuizABCD.js" defer></script>
 @endsection
 
 @section("content")
@@ -23,7 +23,7 @@ Flashcards
                         <div class="spinner-border spinner-border-sm"></div>
                     </a>
                 </li>
-                <li class="breadcrumb-item active">Flashcards</li>
+                <li class="breadcrumb-item active">Quiz ABCD</li>
             </ol>
         </nav>
     </div>
@@ -52,7 +52,7 @@ Flashcards
                     </div>
                     <div class="disclaimer d-none">
                         <div class="d-flex justify-content-center fs-5 column-gap-3 align-items-center py-5">
-                            <div>Flashcards by</div>
+                            <div>Quiz by</div>
                             <div class="d-flex column-gap-1 align-items-center">
                                 <object data="/assets/web/logo.svg" type="image/svg+xml" style="pointer-events: none; width: 25px;"></object>
                                 <strong>Wordic</strong>
@@ -63,7 +63,7 @@ Flashcards
             </div>
         </div>
     </div>
-    <div class="card game-section" id="game-interface">
+    <div class="card game-section">
         <div class="card-body position-relative">
             <div class="position-absolute top-0 start-0 w-100 h-100 d-flex column-gap-2 justify-content-center align-items-center loading-mask" data-mask="info">
                 <div class="spinner-border"></div>
@@ -84,30 +84,13 @@ Flashcards
                     <div class="rounded p-2 accuration-words"><i class="bi bi-bullseye"></i> Accuration: <span class="fw-bold accuration-words-number">-</span>%</div>
                 </div>
             </div>
-            <div class="flip-card mb-4">
-                <input type="checkbox" class="visually-hidden" id="flip-card-checkbox">
-                <label class="flip-card-inner rounded" for="flip-card-checkbox">
-                    <div class="flip-card-front bg-light border rounded d-flex justify-content-center align-items-center">
-                        <span class="fs-3" id="word-card-foreign">-</span>
-                    </div>
-                    <div class="flip-card-back bg-light border rounded d-flex justify-content-center align-items-center">
-                        <span class="fs-3" id="word-card-native">-</span>
-                    </div>
-                </label>
-            </div>
-            <div class="d-flex gap-2 justify-content-center mb-5">
-                <button class="btn btn-success" id="known-button">
-                    <div class="btn-text"><i class="bi bi-check-lg"></i> I know</div>
-                    <div class="btn-spinner spinner-border spinner-border-sm d-none"></div>
-                </button>
-                <button class="btn btn-danger" id="foreign-button">
-                    <div class="btn-text"><i class="bi bi-ban"></i> I don't know</div>
-                    <div class="btn-spinner spinner-border spinner-border-sm d-none"></div>
-                </button>
-            </div>
+
+            <div class="px-2 py-4 border rounded fs-3 fw-bold text-center mb-2 bg-light user-select-none" id="quiz-question"></div>
+            <div id="quiz-answers" class="row gx-2 gy-1 pb-4 user-select-none"></div>
+
             <div class="disclaimer d-none">
                 <div class="d-flex justify-content-center fs-5 column-gap-3 align-items-center py-5">
-                    <div>Flashcards by</div>
+                    <div>Quiz by</div>
                     <div class="d-flex column-gap-1 align-items-center">
                         <object data="/assets/web/logo.svg" type="image/svg+xml" style="pointer-events: none; width: 25px;"></object>
                         <strong>Wordic</strong>

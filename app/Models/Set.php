@@ -20,8 +20,9 @@ class Set {
     public string $image_path;
     public static string $image_directory = "/assets/sets/";
     public int $words_count;
+    public ?array $meta;
 
-    public static function getByID(int $set_id) : ?Set {
+    public static function getByID(int $set_id, int $user_id) : ?Set {
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare("SELECT s.set_id, u.user_id, u.username, s.created_at, s.name, s.description, s.public, s.image_name FROM `Set` s INNER JOIN `User` u ON u.user_id = s.user_id WHERE set_id = ?");
         $stmt->execute([$set_id]);
@@ -47,6 +48,14 @@ class Set {
         $stmt->execute([$set_id]);
         $countData = $stmt->fetch(PDO::FETCH_ASSOC);
         $set->words_count = $countData ? (int)$countData['count'] : 0;
+
+        $stmt = $pdo->prepare("SELECT track_progress, last_played FROM `SetMeta` WHERE set_id = ? AND user_id = ?");
+        $stmt->execute([$set_id, $user_id]);
+        $metaData = $stmt->fetch(PDO::FETCH_ASSOC);
+        $set->meta = $metaData ? [
+            "track_progress" => (bool)$metaData['track_progress'],
+            "last_played" => $metaData['last_played']
+        ] : null;
 
         return $set;
     }
@@ -88,9 +97,9 @@ class Set {
         return $sets;
     }
 
-    public static function create(int $user_id, string $name, string $description, bool $public) : int {
+    public static function create(int $user_id, string $name, string $description, int $public) : int {
         $pdo = Database::getConnection();
-        $stmt = $pdo->prepare("INSERT INTO `Set` (user_id, name, description, public) VALUES (?, ?, ?, b?)");
+        $stmt = $pdo->prepare("INSERT INTO `Set` (user_id, name, description, public) VALUES (?, ?, ?, ?)");
         $stmt->execute([$user_id, $name, $description, $public]);
 
         return $pdo->lastInsertId();
@@ -133,6 +142,40 @@ class Set {
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $data ?? ["user_id" => -1, "public" => false];
+    }
+
+    public static function updateMeta(int $user_id, int $set_id, array $config) : int {
+        $pdo = Database::getConnection();
+
+        // Check if meta exists
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM `SetMeta` WHERE user_id = ? AND set_id = ?");
+        $stmt->execute([$user_id, $set_id]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+
+        if ($data && $data['count'] > 0) {
+            // Update existing meta
+            $sql = "UPDATE `SetMeta` SET ";
+            $params = [];
+            foreach($config as $key => $value){
+                $sql .= "$key = ?, ";
+                $params[] = $value;
+            }
+            $sql = rtrim($sql, ", ");
+            $sql .= " WHERE user_id = ? AND set_id = ?";
+            $params[] = $user_id;
+            $params[] = $set_id;
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+        } else {
+            // Insert new meta
+            $track_progress = $config['track_progress'] ?? true;
+            $last_played = $config['last_played'] ?? (new DateTime())->format("Y-m-d H:i:s");
+            $stmt = $pdo->prepare("INSERT INTO `SetMeta` (set_id, user_id, last_played, track_progress) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$set_id, $user_id, $last_played, $track_progress]);
+        }
+
+        return $stmt->rowCount();
     }
 
     public static function getWords(int $set_id) : array {

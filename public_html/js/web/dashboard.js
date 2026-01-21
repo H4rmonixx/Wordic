@@ -134,143 +134,137 @@ function loadPrivateSets(){
     });
 }
 
-$(document).ready(function() {
-    
-    loadProfileUsername();
+loadPrivateSetsCount().then(loadPrivateSets).then(buildPrivatePagination)
+.catch(function(error) {
+    if(error.statusText){
+        console.log('Error trying to load private sets:', error.statusText);
+        showAlert('Error trying to load private sets: ' + error.statusText, 'danger');
+    } else {
+        console.log('Error trying to load private sets:', error);
+        showAlert('Error trying to load private sets: ' + error, 'danger');
+    }
+});
 
-    loadPrivateSetsCount().then(loadPrivateSets).then(buildPrivatePagination)
-    .catch(function(error) {
-        if(error.statusText){
-            console.log('Error trying to load private sets:', error.statusText);
-            showAlert('Error trying to load private sets: ' + error.statusText, 'danger');
+$("#pagination-private").on("click", ".page-link[data-page]", function (event) {
+    event.preventDefault();
+    changePrivatePage(parseInt($(this).data("page")));
+});
+
+$("#pagination-private-next").on("click", function (event) {
+    event.preventDefault();
+    changePrivatePage(privatePaginationConfig.page + 1);
+});
+
+$("#pagination-private-prev").on("click", function (event) {
+    event.preventDefault();
+    changePrivatePage(privatePaginationConfig.page - 1);
+});
+
+$("#private-sets-container").on("click", ".btn-preview", function (event) {
+    const setID = parseInt($(this).data("set-id"));
+    const setName = $(this).data("set-name");
+
+    $("#modal-set-preview").find('.modal-title').find('span').text(setName + ": ");
+    bootstrap.Modal.getOrCreateInstance('#modal-set-preview').show();
+    let $tbody = $("#modal-set-preview-tbody");
+    $tbody.empty().append('<tr><td colspan="3"><div class="d-flex justify-content-center align-items-center gap-2 p-2"><div>Loading</div><div class="spinner-border spinner-border-sm text-black"></div></div></td></tr>');
+
+    $.ajax({
+        url: `/set/${setID}/words`,
+        method: "POST",
+        dataType: "json"
+    }).then(function(response) {
+        if(response.success) {
+
+            $tbody.empty();
+
+            if(response.words.length === 0) {
+                $tbody.append('<tr><td colspan="3" class="text-center">No words in this set.</td></tr>');
+            } else {
+                response.words.forEach(function(word, index) {
+                    $tbody.append(`<tr><td>${index + 1}</td><td>${word.term}</td><td>${word.definition}</td></tr>`);
+                });
+            }
+            
         } else {
-            console.log('Error trying to load private sets:', error);
-            showAlert('Error trying to load private sets: ' + error, 'danger');
+            showAlert(response.message, 'warning');
+        }
+    }).catch(function(error) {
+        if(error.statusText){
+            console.log('Error trying to load set words:', error.statusText);
+            showAlert('Error trying to load set words: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error trying to load set words:', error);
+            showAlert('Error trying to load set words: ' + error, 'danger');
         }
     });
 
-    $("#pagination-private").on("click", ".page-link[data-page]", function (event) {
-        event.preventDefault();
-        changePrivatePage(parseInt($(this).data("page")));
-    });
+});
 
-    $("#pagination-private-next").on("click", function (event) {
-        event.preventDefault();
-        changePrivatePage(privatePaginationConfig.page + 1);
-    });
+$("#private-sets-container").on("click", ".btn-edit", function () {
+    const setID = parseInt($(this).data("set-id"));
+    const setName = $(this).data("set-name");
+    window.location.href = `/set/${SEO.createCode(setID, setName)}/edit`;
+});
 
-    $("#pagination-private-prev").on("click", function (event) {
-        event.preventDefault();
-        changePrivatePage(privatePaginationConfig.page - 1);
-    });
+$("#private-sets-container").on("click", ".btn-play", function () {
+    const setID = parseInt($(this).data("set-id"));
+    const setName = $(this).data("set-name");
+    window.location.href = `/set/${SEO.createCode(setID, setName)}`;
+});
 
-    $("#private-sets-container").on("click", ".btn-preview", function (event) {
-        const setID = parseInt($(this).data("set-id"));
-        const setName = $(this).data("set-name");
+$("#new-set").on("click", function () {
+    bootstrap.Modal.getOrCreateInstance('#modal-new-set').show();
+});
 
-        $("#modal-set-preview").find('.modal-title').find('span').text(setName + ": ");
-        bootstrap.Modal.getOrCreateInstance('#modal-set-preview').show();
-        let $tbody = $("#modal-set-preview-tbody");
-        $tbody.empty().append('<tr><td colspan="3"><div class="d-flex justify-content-center align-items-center gap-2 p-2"><div>Loading</div><div class="spinner-border spinner-border-sm text-black"></div></div></td></tr>');
+$("#form-new-set").on("submit", function (event) {
+    event.preventDefault();
 
-        $.ajax({
-            url: `/set/${setID}/words`,
-            method: "POST",
-            dataType: "json"
-        }).then(function(response) {
-            if(response.success) {
+    const name = $("#form-new-set-name").val().trim();
+    const description = $("#form-new-set-description").val().trim();
+    const isPublic = $("#form-new-set-public").is(":checked");
 
-                $tbody.empty();
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("public", isPublic ? 1 : 0);
 
-                if(response.words.length === 0) {
-                    $tbody.append('<tr><td colspan="3" class="text-center">No words in this set.</td></tr>');
-                } else {
-                    response.words.forEach(function(word, index) {
-                        $tbody.append(`<tr><td>${index + 1}</td><td>${word.term}</td><td>${word.definition}</td></tr>`);
-                    });
-                }
-                
-            } else {
-                showAlert(response.message, 'warning');
-            }
-        }).catch(function(error) {
-            if(error.statusText){
-                console.log('Error trying to load set words:', error.statusText);
-                showAlert('Error trying to load set words: ' + error.statusText, 'danger');
-            } else {
-                console.log('Error trying to load set words:', error);
-                showAlert('Error trying to load set words: ' + error, 'danger');
-            }
-        });
+    $("#form-new-set-submit .btn-text").prop("disabled", true).toggleClass("d-none");
+    $("#form-new-set-submit .btn-spinner").toggleClass("d-none");
 
-    });
-
-    $("#private-sets-container").on("click", ".btn-edit", function () {
-        const setID = parseInt($(this).data("set-id"));
-        const setName = $(this).data("set-name");
-        window.location.href = `/set/${SEO.createCode(setID, setName)}/edit`;
-    });
-
-    $("#private-sets-container").on("click", ".btn-play", function () {
-        const setID = parseInt($(this).data("set-id"));
-        const setName = $(this).data("set-name");
-        window.location.href = `/set/${SEO.createCode(setID, setName)}`;
-    });
-
-    $("#new-set").on("click", function () {
-        bootstrap.Modal.getOrCreateInstance('#modal-new-set').show();
-    });
-
-    $("#form-new-set").on("submit", function (event) {
-        event.preventDefault();
-
-        const name = $("#form-new-set-name").val().trim();
-        const description = $("#form-new-set-description").val().trim();
-        const isPublic = $("#form-new-set-public").is(":checked");
-
-        const formData = new FormData();
-        formData.append("name", name);
-        formData.append("description", description);
-        formData.append("public", isPublic ? "1" : "0");
-
-        $("#form-new-set-submit .btn-text").prop("disabled", true).toggleClass("d-none");
+    $.ajax({
+        url: "/set/new",
+        method: "POST",
+        dataType: "json",
+        data: formData,
+        processData: false,
+        contentType: false
+    }).then(function(response) {
+        $("#form-new-set-submit .btn-text").prop("disabled", false).toggleClass("d-none");
         $("#form-new-set-submit .btn-spinner").toggleClass("d-none");
-
-        $.ajax({
-            url: "/set/new",
-            method: "POST",
-            dataType: "json",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).then(function(response) {
-            $("#form-new-set-submit .btn-text").prop("disabled", false).toggleClass("d-none");
-            $("#form-new-set-submit .btn-spinner").toggleClass("d-none");
-            if(response.success) {
-                bootstrap.Modal.getInstance('#modal-new-set').hide();
-                showAlert('Set created successfully!', 'success');
-                const newElement = createSetCardElement(response.set);
-                $("#private-sets-container").children().eq(0).after(newElement);
-                if(response.set.public){
-                    $("#public-sets-container").children().eq(0).after(newElement);
-                }
-                setTimeout(function(){
-                    window.location.href = `/set/${SEO.createCode(response.set.set_id, response.set.name)}/edit`;
-                }, 200);
-            } else {
-                return $.Deferred().reject(response.message);
-            }
-        }).catch(function(error) {
+        if(response.success) {
             bootstrap.Modal.getInstance('#modal-new-set').hide();
-            if(error.statusText){
-                console.log('Error trying to create new set:', error.statusText);
-                showAlert('Error trying to create new set: ' + error.statusText, 'danger');
-            } else {
-                console.log('Error trying to create new set:', error);
-                showAlert('Error trying to create new set: ' + error, 'danger');
+            showAlert('Set created successfully!', 'success');
+            const newElement = createSetCardElement(response.set);
+            $("#private-sets-container").children().eq(0).after(newElement);
+            if(response.set.public){
+                $("#public-sets-container").children().eq(0).after(newElement);
             }
-        });
-
+            setTimeout(function(){
+                window.location.href = `/set/${SEO.createCode(response.set.set_id, response.set.name)}/edit`;
+            }, 200);
+        } else {
+            return $.Deferred().reject(response.message);
+        }
+    }).catch(function(error) {
+        bootstrap.Modal.getInstance('#modal-new-set').hide();
+        if(error.statusText){
+            console.log('Error trying to create new set:', error.statusText);
+            showAlert('Error trying to create new set: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error trying to create new set:', error);
+            showAlert('Error trying to create new set: ' + error, 'danger');
+        }
     });
 
 });

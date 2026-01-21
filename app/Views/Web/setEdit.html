@@ -12,10 +12,8 @@ Loading...
 @endsection
 
 @section("scripts")
-<script src="/js/utils/loadProfileUsername.js"></script>
-<script src="/js/utils/SEO.js"></script>
-<script src="/js/utils/papaparse.min.js"></script>
-<script src="/js/web/setEdit.js"></script>
+<script src="/js/utils/papaparse.min.js" defer></script>
+<script src="/js/web/setEdit.js" defer></script>
 @endsection
 
 @section("content")
@@ -117,16 +115,32 @@ Loading...
                                 <div id="words-save-feedback"></div>
                             </div>
                             <div>
-                                <input type="file" id="words-import-file" accept=".csv" class="visually-hidden">
-                                <label for="words-import-file" class="btn btn-outline-secondary" id="words-import-file-btn">
-                                    <div class="btn-text"><i class="bi bi-upload"></i> From CSV</div>
-                                    <div class="btn-spinner spinner-border spinner-border-sm d-none"></div>
-                                </label>
+                                <div class="dropdown">
+                                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">Extra</button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <input type="file" id="words-import-file" accept=".csv" class="visually-hidden">
+                                            <label for="words-import-file" class="dropdown-item" id="words-import-file-btn">
+                                                <div class="btn-text"><i class="bi bi-upload"></i> From CSV</div>
+                                                <div class="btn-spinner spinner-border spinner-border-sm d-none"></div>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item" id="btn-export-csv">
+                                                <div class="btn-text"><i class="bi bi-download"></i> Export to CSV</div>
+                                                <div class="btn-spinner spinner-border spinner-border-sm d-none"></div>
+                                            </button>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a href="/assets/files/import-sample.csv" class="dropdown-item" download>Sample CSV</a></li>
+                                    </ul>
+                                </div>
+                                
                             </div>
                         </div>
                         <div class="not-saved-line rounded d-none"></div>
                         <form id="form-add-word">
-                            <table class="table table-bordered table-striped">
+                            <table class="table table-bordered table-striped rounded">
                                 <thead>
                                     <tr>
                                         <th>#</th>

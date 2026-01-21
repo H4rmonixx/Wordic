@@ -2,6 +2,7 @@ const setCode = SEO.getCodeAfter("set");
 const urlParams = new URLSearchParams(window.location.search);
 
 const game = new Game();
+const loaderDuration = 1000;
 
 function loadSet(){
     
@@ -61,6 +62,7 @@ function loadWords(){
 
 function showNextWord(word){
 
+    $("#quiz-answers .answer").removeClass("wrong correct marked loader");
     $(".rehearse-words-number").text(game.getWordsToRehearseCount());
     $(".accuration-words-number").text(game.getAccuracy());
 
@@ -101,10 +103,20 @@ function showNextWord(word){
         return;
     }
 
-    $("#word-card-foreign").text(word.term);
-    $("#word-card-native").text(word.definition);
+    $("#quiz-question").text(word.term);
+    $("#quiz-answers").empty();
+    const allAnswers = game.randomAnswerOptions(word, 4);
+    allAnswers.forEach((ans, index) => {
+        const $answerDiv = $(`
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="answer h-100 d-flex justify-content-center align-items-center p-2 border rounded" data-answer="${ans}">${ans}</div>
+        </div>
+        `);
+        $("#quiz-answers").append($answerDiv);
+    });
 
 }    
+
 
 loadSet().then(loadWords).then(function() {
     showNextWord(game.nextWord());
@@ -118,6 +130,7 @@ loadSet().then(loadWords).then(function() {
         showAlert('Error trying to load set: ' + error, 'danger');
     }
 });
+
 
 $('#known-button').on('click', function() {
     game.markKnown();
@@ -167,4 +180,23 @@ $("#btn-next").on("click", function(){
     game.repeat();
     $(".game-section").toggleClass("d-none");
     showNextWord(game.nextWord());
+});
+
+$("#quiz-answers").on("click", ".answer", function(){
+    $("#quiz-answers .answer").addClass("disabled");
+    const ans = $(this).text().trim();
+    const goodAns = game.currentWord().definition.trim();
+    if(ans == goodAns){
+        game.markKnown();
+        $(this).addClass("correct loader");
+    } else {
+        game.markUnknown();
+        $(this).addClass("wrong loader");
+        $("#quiz-answers .answer").filter(function() {
+            return $(this).text().trim() == goodAns;
+        }).addClass("marked");
+    }
+    setTimeout(()=>{
+        showNextWord(game.nextWord());
+    }, loaderDuration);
 });

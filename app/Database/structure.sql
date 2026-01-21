@@ -1,9 +1,10 @@
 USE wordic;
 
+DROP TABLE IF EXISTS `WordProgress`;
 DROP TABLE IF EXISTS `Word`;
+DROP TABLE IF EXISTS `SetMeta`;
 DROP TABLE IF EXISTS `Set`;
 DROP TABLE IF EXISTS `User`;
-DROP TABLE IF EXISTS `WordProgress`;
 
 CREATE TABLE `User` (
     `user_id` int NOT NULL AUTO_INCREMENT,
@@ -27,6 +28,16 @@ CREATE TABLE `Set` (
     PRIMARY KEY (`set_id`),
     FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE,
     UNIQUE KEY `name_unique` (`name`)
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `SetMeta` (
+    `set_id` int NOT NULL,
+    `user_id` int NOT NULL,
+    `last_played` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `track_progress` boolean NOT NULL DEFAULT TRUE,
+    PRIMARY KEY (`set_id`, `user_id`),
+    FOREIGN KEY (`set_id`) REFERENCES `Set` (`set_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `Word` (

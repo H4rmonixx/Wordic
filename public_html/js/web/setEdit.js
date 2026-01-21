@@ -92,351 +92,375 @@ function reindexWords(){
     });
 }
 
-$(document).ready(function() {
-    
-    loadProfileUsername();
+loadSet().then(loadWords)
+.catch(function(error) {
+    if(error.statusText){
+        console.log('Error trying to load set:', error.statusText);
+        showAlert('Error trying to load set: ' + error.statusText, 'danger');
+    } else {
+        console.log('Error trying to load set:', error);
+        showAlert('Error trying to load set: ' + error, 'danger');
+    }
+});
 
-    loadSet().then(loadWords)
-    .catch(function(error) {
-        if(error.statusText){
-            console.log('Error trying to load set:', error.statusText);
-            showAlert('Error trying to load set: ' + error.statusText, 'danger');
+$("#form-settings").on("submit", function(event){
+    event.preventDefault();
+    let formData = new FormData();
+    formData.append("name", $("#form-settings-name").val());
+    formData.append("description", $("#form-settings-description").val());
+    formData.append("public", $("#form-settings-public").prop("checked") ? 1 : 0);
+
+    if(setCode == null){
+        showAlert('No set ID', 'danger');
+        return;
+    }
+
+    const form = this;
+
+    $(form).find(".btn-text").toggleClass("d-none");
+    $(form).find(".btn-spinner").toggleClass("d-none");
+    $(form).find(".btn").prop("disabled", true);
+    $.ajax({
+        url: `/set/${setCode}/edit/info`,
+        type: "post",
+        dataType: 'json',
+        data: formData,
+        processData: false,
+        contentType: false
+    }).then(function(response){
+        if(response.success){
+            $(form).find(".btn-text").toggleClass("d-none");
+            $(form).find(".btn-spinner").toggleClass("d-none");
+            $(form).find(".btn").prop("disabled", false);
+            showAlert('Settings saved.', 'success');
         } else {
-            console.log('Error trying to load set:', error);
-            showAlert('Error trying to load set: ' + error, 'danger');
+            return $.Deferred().reject(response.message);
+        }
+    }).catch(function(error){
+        $(form).find(".btn-text").toggleClass("d-none");
+        $(form).find(".btn-spinner").toggleClass("d-none");
+        $(form).find(".btn").prop("disabled", false);
+        if(error.statusText){
+            console.log('Error trying to edit info:', error.statusText);
+            showAlert('Error trying to edit info: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error trying to edit info:', error);
+            showAlert('Error trying to edit info: ' + error, 'danger');
         }
     });
 
-    $("#form-settings").on("submit", function(event){
-        event.preventDefault();
-        let formData = new FormData();
-        formData.append("name", $("#form-settings-name").val());
-        formData.append("description", $("#form-settings-description").val());
-        formData.append("public", $("#form-settings-public").prop("checked") ? 1 : 0);
+});
 
-        if(setCode == null){
-            showAlert('No set ID', 'danger');
-            return;
-        }
+$("#form-image").on("submit", function(event){
+    event.preventDefault();
+    
+    if($(this).find('input[type="file"]')[0].files.length == 0) return;
 
-        const form = this;
+    let formData = new FormData();
+    formData.append("image", $(this).find('input[type="file"]')[0].files[0]);
 
-        $(form).find(".btn-text").toggleClass("d-none");
-        $(form).find(".btn-spinner").toggleClass("d-none");
-        $(form).find(".btn").prop("disabled", true);
-        $.ajax({
-            url: `/set/${setCode}/edit/info`,
-            type: "post",
-            dataType: 'json',
-            data: formData,
-            processData: false,
-            contentType: false
-        }).then(function(response){
-            if(response.success){
-                $(form).find(".btn-text").toggleClass("d-none");
-                $(form).find(".btn-spinner").toggleClass("d-none");
-                $(form).find(".btn").prop("disabled", false);
-                showAlert('Settings saved.', 'success');
-            } else {
-                return $.Deferred().reject(response.message);
-            }
-        }).catch(function(error){
+    const setCode = SEO.getCodeAfter("set");
+    if(setCode == null){
+        showAlert('No set ID', 'danger');
+        return;
+    }
+
+    const form = this;
+
+    $(form).find(".btn-text").toggleClass("d-none");
+    $(form).find(".btn-spinner").toggleClass("d-none");
+    $(form).find(".btn").prop("disabled", true);
+    $.ajax({
+        url: `/set/${setCode}/edit/image`,
+        type: "post",
+        dataType: 'json',
+        data: formData,
+        processData: false,
+        contentType: false
+    }).then(function(response){
+        if(response.success){
             $(form).find(".btn-text").toggleClass("d-none");
             $(form).find(".btn-spinner").toggleClass("d-none");
             $(form).find(".btn").prop("disabled", false);
-            if(error.statusText){
-                console.log('Error trying to edit info:', error.statusText);
-                showAlert('Error trying to edit info: ' + error.statusText, 'danger');
-            } else {
-                console.log('Error trying to edit info:', error);
-                showAlert('Error trying to edit info: ' + error, 'danger');
-            }
-        });
-
-    });
-
-    $("#form-image").on("submit", function(event){
-        event.preventDefault();
-        
-        if($(this).find('input[type="file"]')[0].files.length == 0) return;
-
-        let formData = new FormData();
-        formData.append("image", $(this).find('input[type="file"]')[0].files[0]);
-
-        const setCode = SEO.getCodeAfter("set");
-        if(setCode == null){
-            showAlert('No set ID', 'danger');
-            return;
+            $("#set-image").prop("src", response.image_path);
+            showAlert('Image saved.', 'success');
+        } else {
+            return $.Deferred().reject(response.message);
         }
-
-        const form = this;
-
+    }).catch(function(error){
         $(form).find(".btn-text").toggleClass("d-none");
         $(form).find(".btn-spinner").toggleClass("d-none");
-        $(form).find(".btn").prop("disabled", true);
-        $.ajax({
-            url: `/set/${setCode}/edit/image`,
-            type: "post",
-            dataType: 'json',
-            data: formData,
-            processData: false,
-            contentType: false
-        }).then(function(response){
-            if(response.success){
-                $(form).find(".btn-text").toggleClass("d-none");
-                $(form).find(".btn-spinner").toggleClass("d-none");
-                $(form).find(".btn").prop("disabled", false);
-                $("#set-image").prop("src", response.image_path);
-                showAlert('Image saved.', 'success');
-            } else {
-                return $.Deferred().reject(response.message);
-            }
-        }).catch(function(error){
-            $(form).find(".btn-text").toggleClass("d-none");
-            $(form).find(".btn-spinner").toggleClass("d-none");
-            $(form).find(".btn").prop("disabled", false);
-            if(error.statusText){
-                console.log('Error trying to edit image:', error.statusText);
-                showAlert('Error trying to edit image: ' + error.statusText, 'danger');
-            } else {
-                console.log('Error trying to edit image:', error);
-                showAlert('Error trying to edit image: ' + error, 'danger');
-            }
-        });
-
+        $(form).find(".btn").prop("disabled", false);
+        if(error.statusText){
+            console.log('Error trying to edit image:', error.statusText);
+            showAlert('Error trying to edit image: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error trying to edit image:', error);
+            showAlert('Error trying to edit image: ' + error, 'danger');
+        }
     });
 
-    $("#form-add-word").on("submit", function(event){
-        event.preventDefault();
-        const term = $("#form-add-word-term").val().trim();
-        const definition = $("#form-add-word-definition").val().trim();
-        if(term.length < 1 || term.length > 100){
-            showAlert('Term should contain 1-100 characters', 'danger');
-            return;
-        }
-        if(definition.length < 1 || definition.length > 100){
-            showAlert('Definition should contain 1-100 characters', 'danger');
-            return;
-        }
+});
 
-        const pattern = /^[\p{L}\p{N}]+$/u;
-        if(!pattern.test(term) || !pattern.test(definition)){
-            showAlert('Only letters and digits allowed', 'danger');
-            return;
-        }
+$("#form-add-word").on("submit", function(event){
+    event.preventDefault();
+    const term = $("#form-add-word-term").val().trim();
+    const definition = $("#form-add-word-definition").val().trim();
+    if(term.length < 1 || term.length > 100){
+        showAlert('Term should contain 1-100 characters', 'danger');
+        return;
+    }
+    if(definition.length < 1 || definition.length > 100){
+        showAlert('Definition should contain 1-100 characters', 'danger');
+        return;
+    }
 
+    const pattern = /^[\p{L}\p{N}]+$/u;
+    if(!pattern.test(term) || !pattern.test(definition)){
+        showAlert('Only letters and digits allowed', 'danger');
+        return;
+    }
+
+    const lastIndex = parseInt($(".word-index:last").text());
+    $("#words-tbody").append(createWordTr(term, definition, lastIndex));
+    $("#form-add-word-term").val("");
+    $("#form-add-word-definition").val("");
+
+    markWordsUnsaved();
+
+});
+
+$("#form-words-search").on("submit", function(event){
+    event.preventDefault();
+    const searchedPhrase = $("#form-words-search-input").val().toLowerCase();
+    let found = false;
+
+    $(".word-term").removeClass("text-primary fw-bold");
+    $(".word-definition").removeClass("text-primary fw-bold");
+
+    $(".word-term, .word-definition").each(function () {
+        if(found) return;
+        const value = $(this).val().toLowerCase();
+        if(value.includes(searchedPhrase)){
+            found = true;
+            $(this).addClass("text-primary fw-bold");
+            $(this)[0].scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    });
+
+});
+
+$("#words-save-btn").on("click", function(){
+
+    if(setCode == null){
+        showAlert('No set ID', 'danger');
+        return;
+    }
+
+    let words = $(".word-row").map(function(){
+        const term = $(this).find(".word-term").val().trim();
+        const definition = $(this).find(".word-definition").val().trim();
+
+        if (!term || !definition) return null;
+        return { term, definition };
+    }).get();
+
+
+    const button = this;
+    $(button).find(".btn-text").toggleClass("d-none");
+    $(button).find(".btn-spinner").toggleClass("d-none");
+    $(button).prop("disabled", true);
+
+    $.ajax({
+        url: `/set/${setCode}/edit/words`,
+        method: 'post',
+        dataType: 'json',
+        data: JSON.stringify(words)
+    }).then(function(response){
+        if(response.success){
+
+            $(button).find(".btn-text").toggleClass("d-none");
+            $(button).find(".btn-spinner").toggleClass("d-none");
+            $(button).prop("disabled", false);
+
+            $(".not-saved-line").addClass("d-none");
+            $("#words-save-feedback").empty().append($(`<div class="text-success"><i class="bi bi-check"></i> Words saved</div>`));
+
+        } else {
+            return $.Deferred().reject(response.message);
+        }
+    }).catch(function(error) {
+        $(button).find(".btn-text").toggleClass("d-none");
+        $(button).find(".btn-spinner").toggleClass("d-none");
+        $(button).prop("disabled", false);
+        if(error.statusText){
+            console.log('Error trying to save words:', error.statusText);
+            showAlert('Error trying to save words: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error trying to save words:', error);
+            showAlert('Error trying to save words: ' + error, 'danger');
+        }
+    });
+
+})
+
+$("#words-tbody").on("input", ".word-term, .word-definition", function(){
+    markWordsUnsaved();
+});
+
+$("#words-tbody").on("click", ".word-btn-del", function(){
+    $(this).closest("tr").remove();
+    markWordsUnsaved();
+    reindexWords();
+});
+
+$("#btn-delete-set").on("click", function(){
+    bootstrap.Modal.getOrCreateInstance($("#modal-delete-set")).show();
+});
+
+$("#btn-accept-delete-set").on("click", function(){
+    
+    if(setCode == null){
+        showAlert('No set ID', 'danger');
+        return;
+    }
+
+    const button = this;
+    $(button).find(".btn-text").toggleClass("d-none");
+    $(button).find(".btn-spinner").toggleClass("d-none");
+    $(button).prop("disabled", true);
+
+    $.ajax({
+        url: `/set/${setCode}/delete`,
+        method: 'post',
+        dataType: 'json'
+    }).then(function(response){
+        if(response.success){
+
+            $(button).find(".btn-text").toggleClass("d-none");
+            $(button).find(".btn-spinner").toggleClass("d-none");
+            $(button).prop("disabled", false);
+
+            window.location.href = `/dashboard`;
+            
+        } else {
+            return $.Deferred().reject(response.message);
+        }
+    }).catch(function(error) {
+        $(button).find(".btn-text").toggleClass("d-none");
+        $(button).find(".btn-spinner").toggleClass("d-none");
+        $(button).prop("disabled", false);
+        if(error.statusText){
+            console.log('Error trying to delete set:', error.statusText);
+            showAlert('Error trying to delete set: ' + error.statusText, 'danger');
+        } else {
+            console.log('Error trying to delete set:', error);
+            showAlert('Error trying to delete set: ' + error, 'danger');
+        }
+    });
+
+});
+
+$("#words-import-file").on("change", function(){
+
+    if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+        showAlert('The File APIs are not fully supported in this browser.', 'danger');
+        return;
+    }
+
+    const file = this.files[0];
+    if(!file) return;
+
+    const button = $("#words-import-file-btn");
+    const input = this;
+    $(button).find(".btn-text").addClass("d-none");
+    $(button).find(".btn-spinner").removeClass("d-none");
+    $(input).prop("disabled", true);
+
+    $("#modal-words-import .modal-title .fst-italic").text(file.name);
+
+    Papa.parse(file, {
+        skipEmptyLines: true,
+        complete: function(results) {
+
+            $(button).find(".btn-text").removeClass("d-none");
+            $(button).find(".btn-spinner").addClass("d-none");
+            $(input).prop("disabled", false);
+
+            dataFromCsv = [];
+
+            $("#modal-words-import-tbody").empty();
+
+            results.data.forEach((row, index) => {
+                const term = row[0];
+                const definition = row[1];
+
+                if(term && definition){
+                    dataFromCsv.push({ term: term.trim(), definition: definition.trim() });
+                    $("#modal-words-import-tbody").append($(
+                        `<tr>
+                            <td>${index + 1}</td>
+                            <td>${term.trim()}</td>
+                            <td>${definition.trim()}</td>
+                        </tr>`
+                    ));
+                }
+
+            });
+            bootstrap.Modal.getOrCreateInstance($("#modal-words-import")).show();
+        },
+        error: function(err) {
+
+            $(button).find(".btn-text").removeClass("d-none");
+            $(button).find(".btn-spinner").addClass("d-none");
+            $(input).prop("disabled", false);
+            showAlert('Error parsing CSV file: ' + err.message, 'danger');
+
+        }
+    });
+    $(this).val('');
+});
+
+$("#modal-words-import-accept").on("click", function(){
+    dataFromCsv.forEach((word) => {
         const lastIndex = parseInt($(".word-index:last").text());
-        $("#words-tbody").append(createWordTr(term, definition, lastIndex));
-        $("#form-add-word-term").val("");
-        $("#form-add-word-definition").val("");
-
-        markWordsUnsaved();
-
+        $("#words-tbody").append(createWordTr(word.term, word.definition, lastIndex));
     });
+    markWordsUnsaved();
+    dataFromCsv = [];
+    $("#modal-words-import-tbody").empty();
+    bootstrap.Modal.getOrCreateInstance($("#modal-words-import")).hide();
+});
 
-    $("#form-words-search").on("submit", function(event){
-        event.preventDefault();
-        const searchedPhrase = $("#form-words-search-input").val().toLowerCase();
-        let found = false;
+$("#btn-export-csv").on("click", function(){
 
-        $(".word-term").removeClass("text-primary fw-bold");
-        $(".word-definition").removeClass("text-primary fw-bold");
+    $(this).prop("disabled", true);
 
-        $(".word-term, .word-definition").each(function () {
-            if(found) return;
-            const value = $(this).val().toLowerCase();
-            if(value.includes(searchedPhrase)){
-                found = true;
-                $(this).addClass("text-primary fw-bold");
-                $(this)[0].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }
-        });
-
+    let csvContent = "data:text/csv;charset=utf-8,";
+    let wordCount = 0;
+    $(".word-row").each(function(){
+        const term = $(this).find(".word-term").val().trim();
+        const definition = $(this).find(".word-definition").val().trim();
+        csvContent += `"${term.replace(/"/g, '""')}","${definition.replace(/"/g, '""')}"\r\n`;
+        wordCount++;
     });
+    if(wordCount === 0){
+        showAlert('No words to export', 'danger');
+        $(this).prop("disabled", false);
+        return;
+    }
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.classList.add("d-none");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${setCode}-words.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-    $("#words-save-btn").on("click", function(){
-
-        if(setCode == null){
-            showAlert('No set ID', 'danger');
-            return;
-        }
-
-        let words = $(".word-row").map(function(){
-            const term = $(this).find(".word-term").val().trim();
-            const definition = $(this).find(".word-definition").val().trim();
-
-            if (!term || !definition) return null;
-            return { term, definition };
-        }).get();
-
-
-        const button = this;
-        $(button).find(".btn-text").toggleClass("d-none");
-        $(button).find(".btn-spinner").toggleClass("d-none");
-        $(button).prop("disabled", true);
-
-        $.ajax({
-            url: `/set/${setCode}/edit/words`,
-            method: 'post',
-            dataType: 'json',
-            data: JSON.stringify(words)
-        }).then(function(response){
-            if(response.success){
-
-                $(button).find(".btn-text").toggleClass("d-none");
-                $(button).find(".btn-spinner").toggleClass("d-none");
-                $(button).prop("disabled", false);
-
-                $(".not-saved-line").addClass("d-none");
-                $("#words-save-feedback").empty().append($(`<div class="text-success"><i class="bi bi-check"></i> Words saved</div>`));
-
-            } else {
-                return $.Deferred().reject(response.message);
-            }
-        }).catch(function(error) {
-            $(button).find(".btn-text").toggleClass("d-none");
-            $(button).find(".btn-spinner").toggleClass("d-none");
-            $(button).prop("disabled", false);
-            if(error.statusText){
-                console.log('Error trying to save words:', error.statusText);
-                showAlert('Error trying to save words: ' + error.statusText, 'danger');
-            } else {
-                console.log('Error trying to save words:', error);
-                showAlert('Error trying to save words: ' + error, 'danger');
-            }
-        });
-
-    })
-
-    $("#words-tbody").on("input", ".word-term, .word-definition", function(){
-        markWordsUnsaved();
-    });
-
-    $("#words-tbody").on("click", ".word-btn-del", function(){
-        $(this).closest("tr").remove();
-        markWordsUnsaved();
-        reindexWords();
-    });
-
-    $("#btn-delete-set").on("click", function(){
-        bootstrap.Modal.getOrCreateInstance($("#modal-delete-set")).show();
-    });
-
-    $("#btn-accept-delete-set").on("click", function(){
-        
-        if(setCode == null){
-            showAlert('No set ID', 'danger');
-            return;
-        }
-
-        const button = this;
-        $(button).find(".btn-text").toggleClass("d-none");
-        $(button).find(".btn-spinner").toggleClass("d-none");
-        $(button).prop("disabled", true);
-
-        $.ajax({
-            url: `/set/${setCode}/delete`,
-            method: 'post',
-            dataType: 'json'
-        }).then(function(response){
-            if(response.success){
-
-                $(button).find(".btn-text").toggleClass("d-none");
-                $(button).find(".btn-spinner").toggleClass("d-none");
-                $(button).prop("disabled", false);
-
-                window.location.href = `/dashboard`;
-                
-            } else {
-                return $.Deferred().reject(response.message);
-            }
-        }).catch(function(error) {
-            $(button).find(".btn-text").toggleClass("d-none");
-            $(button).find(".btn-spinner").toggleClass("d-none");
-            $(button).prop("disabled", false);
-            if(error.statusText){
-                console.log('Error trying to delete set:', error.statusText);
-                showAlert('Error trying to delete set: ' + error.statusText, 'danger');
-            } else {
-                console.log('Error trying to delete set:', error);
-                showAlert('Error trying to delete set: ' + error, 'danger');
-            }
-        });
-
-    });
-
-    $("#words-import-file").on("change", function(){
-
-        if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-            showAlert('The File APIs are not fully supported in this browser.', 'danger');
-            return;
-        }
-
-        const file = this.files[0];
-        if(!file) return;
-
-        const button = $("#words-import-file-btn");
-        const input = this;
-        $(button).find(".btn-text").addClass("d-none");
-        $(button).find(".btn-spinner").removeClass("d-none");
-        $(input).prop("disabled", true);
-
-        $("#modal-words-import .modal-title .fst-italic").text(file.name);
-
-        Papa.parse(file, {
-            skipEmptyLines: true,
-            complete: function(results) {
-
-                $(button).find(".btn-text").removeClass("d-none");
-                $(button).find(".btn-spinner").addClass("d-none");
-                $(input).prop("disabled", false);
-
-                dataFromCsv = [];
-
-                $("#modal-words-import-tbody").empty();
-
-                results.data.forEach((row, index) => {
-                    const term = row[0];
-                    const definition = row[1];
-
-                    if(term && definition){
-                        dataFromCsv.push({ term: term.trim(), definition: definition.trim() });
-                        $("#modal-words-import-tbody").append($(
-                            `<tr>
-                                <td>${index + 1}</td>
-                                <td>${term.trim()}</td>
-                                <td>${definition.trim()}</td>
-                            </tr>`
-                        ));
-                    }
-
-                });
-                bootstrap.Modal.getOrCreateInstance($("#modal-words-import")).show();
-            },
-            error: function(err) {
-
-                $(button).find(".btn-text").removeClass("d-none");
-                $(button).find(".btn-spinner").addClass("d-none");
-                $(input).prop("disabled", false);
-                showAlert('Error parsing CSV file: ' + err.message, 'danger');
-
-            }
-        });
-        $(this).val('');
-    });
-
-    $("#modal-words-import-accept").on("click", function(){
-        dataFromCsv.forEach((word) => {
-            const lastIndex = parseInt($(".word-index:last").text());
-            $("#words-tbody").append(createWordTr(word.term, word.definition, lastIndex));
-        });
-        markWordsUnsaved();
-        dataFromCsv = [];
-        $("#modal-words-import-tbody").empty();
-        bootstrap.Modal.getOrCreateInstance($("#modal-words-import")).hide();
-    });
+    $(this).prop("disabled", false);
 
 });

@@ -67,5 +67,10 @@ $router->get('/set/{code}/flashcards', [SetController::class, 'pageSetFlashcards
     RetrieveIDMiddleware::class,
     SetOwnerOrPublicAuthMiddleware::class
 ]);
+$router->get('/set/{code}/quiz-abcd', [SetController::class, 'pageSetQuizABCD'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    SetOwnerOrPublicAuthMiddleware::class
+]);
 
 return $router;

@@ -29,12 +29,15 @@ class SetController {
     }
 
     public function pageSetFlashcards(Request $request) : bool {
+        Set::updateMeta($request->param("user_id"), (int)$request->param("id"), [
+            "last_played" => date('Y-m-d H:i:s')
+        ]);
         echo LayoutEngine::resolveWebLayout('setFlashcards.html');
         return true;
     }
 
-    public function pageSetQuiz(Request $request) : bool {
-        echo LayoutEngine::resolveWebLayout('setQuiz.html');
+    public function pageSetQuizABCD(Request $request) : bool {
+        echo LayoutEngine::resolveWebLayout('setQuizABCD.html');
         return true;
     }
 
@@ -46,13 +49,13 @@ class SetController {
             return true;
         }
 
-        $set_id = Set::create($request->param("user_id"), $_POST['name'], $_POST['description'], (bool)$_POST['public']);
+        $set_id = Set::create($request->param("user_id"), $_POST['name'], $_POST['description'], $_POST['public']);
         if($set_id <= 0){
             echo json_encode(['success' => false, 'message' => 'Unknown error']);
             return true;
         }
 
-        $set = Set::getByID($set_id);
+        $set = Set::getByID($set_id, $request->param("user_id"));
         if($set === null){
             echo json_encode(['success' => false, 'message' => 'Set cannot be reached']);
             return true;
@@ -93,7 +96,7 @@ class SetController {
             return true;
         }
 
-        $set = Set::getByID((int)$set_id);
+        $set = Set::getByID((int)$set_id, $request->param("user_id"));
         if($set === null){
             echo json_encode(['success' => false, 'message' => 'Set cannot be reached']);
             return true;
@@ -159,6 +162,27 @@ class SetController {
             'words' => $words,
             'message' => ''
         ]);
+        return true;
+    }
+
+    public function editMeta(Request $request) : bool {
+        header('Content-Type: application/json');
+
+        $set_id = $request->param('id');
+        if($set_id === null){
+            echo json_encode(['success' => false, 'message' => 'Set ID is required']);
+            return true;
+        }
+
+        $data = $request->json();
+        if($data === null){
+            echo json_encode(['success' => false, 'message' => 'Meta data is required']);
+            return true;
+        }
+
+        Set::updateMeta($request->param("user_id"), (int)$set_id, $data);
+
+        echo json_encode(['success' => true, 'message' => '']);
         return true;
     }
 
