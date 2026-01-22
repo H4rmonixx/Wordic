@@ -62,7 +62,9 @@ function loadWords(){
 
 function showNextWord(word){
 
-    $("#quiz-answers .answer").removeClass("wrong correct marked loader");
+    $(" input").removeClass("wrong correct");
+    $("#answer-form .input-group").removeClass("loader");
+    $("#correct-ans").addClass("d-none");
     $(".rehearse-words-number").text(game.getWordsToRehearseCount());
     $(".accuration-words-number").text(game.getAccuracy());
 
@@ -104,16 +106,7 @@ function showNextWord(word){
     }
 
     $("#quiz-question").text(word.term);
-    $("#quiz-answers").empty();
-    const allAnswers = game.randomAnswerOptions(word, 4);
-    allAnswers.forEach((ans, index) => {
-        const $answerDiv = $(`
-        <div class="col-12 col-sm-6 col-md-3">
-            <div class="answer h-100 d-flex justify-content-center align-items-center p-2 border border-primary rounded" data-answer="${ans}">${ans}</div>
-        </div>
-        `);
-        $("#quiz-answers").append($answerDiv);
-    });
+    $("#answer-form input").val("");
 
 }    
 
@@ -151,21 +144,66 @@ $("#btn-next").on("click", function(){
     showNextWord(game.nextWord());
 });
 
-$("#quiz-answers").on("click", ".answer", function(){
-    $("#quiz-answers .answer").addClass("disabled");
-    const ans = $(this).text().trim();
+$("#answer-form").on("submit", function(event){
+    event.preventDefault();
+    const fieldset = $(this).find("fieldset");
+    fieldset.prop("disabled", true);
+    const ans = $(this).find("input").val().trim();
     const goodAns = game.currentWord().definition.trim();
-    if(ans == goodAns){
+    if(isCorrect(ans, goodAns)){
         game.markKnown();
-        $(this).addClass("correct loader");
+        $(this).find("input").addClass("correct");
+        $(this).find(".input-group").addClass("loader");
     } else {
         game.markUnknown();
-        $(this).addClass("wrong loader");
-        $("#quiz-answers .answer").filter(function() {
-            return $(this).text().trim() == goodAns;
-        }).addClass("marked");
+        $(this).find("input").addClass("wrong loader");
+        $(this).find(".input-group").addClass("loader");
+        $("#correct-ans").find("span").eq(1).text(goodAns);
+        $("#correct-ans").removeClass("d-none");
     }
     setTimeout(()=>{
+        fieldset.prop("disabled", false);
+        fieldset.find("input").focus();
         showNextWord(game.nextWord());
     }, loaderDuration);
 });
+
+
+
+// USER INPUT SIMILAR ENOUGH TO CORRECT ANSWER
+function normalize(text) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function levenshtein(a, b) {
+    const m = [];
+    for (let i = 0; i <= b.length; i++) m[i] = [i];
+    for (let j = 0; j <= a.length; j++) m[0][j] = j;
+
+    for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+        m[i][j] = b[i - 1] === a[j - 1]
+        ? m[i - 1][j - 1]
+        : Math.min(
+            m[i - 1][j - 1] + 1,
+            m[i][j - 1] + 1,
+            m[i - 1][j] + 1
+            );
+    }
+    }
+    return m[b.length][a.length];
+}
+function isCorrect(userInput, correctAnswer) {
+    let tolerance;
+    if(correctAnswer.length <= 5) tolerance = 0;
+    else if(correctAnswer.length <= 8) tolerance = 1;
+    else tolerance = 2;
+    const n1 = normalize(userInput);
+    const n2 = normalize(correctAnswer);
+    return levenshtein(n1, n2) <= tolerance;
+}

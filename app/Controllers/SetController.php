@@ -36,6 +36,11 @@ class SetController {
         return true;
     }
 
+    public function pageSetQuiz(Request $request) : bool {
+        echo LayoutEngine::resolveWebLayout('setQuiz.html');
+        return true;
+    }
+
     public function pageSetQuizABCD(Request $request) : bool {
         echo LayoutEngine::resolveWebLayout('setQuizABCD.html');
         return true;

@@ -79,28 +79,28 @@ main{
   cursor: pointer;
   background-color: var(--bs-light);
 }
-.answer.correct{
-  background-color: var(--bs-success-bg-subtle);
-  color: var(--bs-success-text-emphasis);
+.correct{
+  background-color: var(--bs-success-bg-subtle) !important;
+  color: var(--bs-success-text-emphasis) !important;
   border-color: black !important;
 }
-.answer.wrong{
-  background-color: var(--bs-danger-bg-subtle);
-  color: var(--bs-danger-text-emphasis);
+.wrong{
+  background-color: var(--bs-danger-bg-subtle) !important;
+  color: var(--bs-danger-text-emphasis) !important;
   border-color: black !important;
 }
-.answer.marked{
-  background-color: var(--bs-warning-bg-subtle);
-  color: var(--bs-warning-text-emphasis);
+.marked{
+  background-color: var(--bs-warning-bg-subtle) !important;
+  color: var(--bs-warning-text-emphasis) !important;
   border-color: black !important;
 }
-.answer.disabled{
+.disabled{
   pointer-events: none;
 }
-.answer.loader{
+.loader{
   position: relative;
 }
-.answer.loader::after{
+.loader::after{
   content: "";
   z-index: 10;
   display: block;
@@ -112,7 +112,7 @@ main{
   background-color: rgba(0,0,0,.2);
 
   animation-name: answer-loader;
-  animation-duration: 1000ms;
+  animation-duration: 1250ms;
   animation-timing-function: linear;
   animation-delay: 0;
   animation-fill-mode: forwards;

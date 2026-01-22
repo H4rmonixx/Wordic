@@ -8,7 +8,7 @@ Quiz
 
 @section("scripts")
 <script src="/js/utils/Game.js" defer></script>
-<script src="/js/web/setQuizABCD.js" defer></script>
+<script src="/js/web/setQuiz.js" defer></script>
 @endsection
 
 @section("content")
@@ -23,7 +23,7 @@ Quiz
                         <div class="spinner-border spinner-border-sm"></div>
                     </a>
                 </li>
-                <li class="breadcrumb-item active">Quiz ABCD</li>
+                <li class="breadcrumb-item active">Quiz</li>
             </ol>
         </nav>
     </div>
@@ -86,7 +86,17 @@ Quiz
             </div>
 
             <div class="px-2 py-4 border rounded fs-3 fw-bold text-center mb-3 bg-light user-select-none" id="quiz-question"></div>
-            <div id="quiz-answers" class="row gx-2 gy-1 pb-4 user-select-none"></div>
+            <form class="pb-4" id="answer-form">
+                <fieldset>
+                    <div class="input-group border border-primary rounded">
+                        <input type="text" class="form-control" placeholder="Answer...">
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </div>
+                </fieldset>
+                <div class="p-2 mt-2 border border-warning bg-warning-subtle rounded fs-5 d-none" id="correct-ans">
+                    <span class="fw-bold">Correct: </span><span></span>
+                </div>
+            </form>
 
             <div class="disclaimer d-none">
                 <div class="d-flex justify-content-center fs-5 column-gap-3 align-items-center py-5">
