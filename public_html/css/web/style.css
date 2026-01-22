@@ -9,8 +9,16 @@ header .navbar-toggler{
 .profile-link:hover i:nth-child(2){
     display: block !important;
 }
+.profile-username{
+    background-color: rgba(220,220,220,.6);
+    padding: 0 5px;
+}
 .profile-link div{
     font-size: 80%;
+    border-radius: 5px;
+}
+.profile-link i{
+    font-size: 2.3rem;
 }
 footer{
     background-color: #07070A;
