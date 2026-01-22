@@ -13,3 +13,21 @@ $.ajax({
     console.log('Error loading username:', error);
     showAlert('Error loading username', 'danger');
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    // wait a moment for CSS layout to settle
+    requestAnimationFrame(() => {
+
+        const recalc = () => {
+            const minHeight = $(window).height()
+                - $('header').outerHeight(true)
+                - $('footer').outerHeight(true);
+
+            $("main").css("min-height", `${minHeight}px`);
+        };
+
+        recalc();
+
+        $(window).on('load resize', recalc);
+    });
+});

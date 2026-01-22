@@ -63,6 +63,7 @@ function showNextWord(word){
 
     $(".rehearse-words-number").text(game.getWordsToRehearseCount());
     $(".accuration-words-number").text(game.getAccuracy());
+    $("#quiz-progress").css("width", `${game.getProgress()}%`);
 
     if(word == null){
         $(".game-section").toggleClass("d-none");

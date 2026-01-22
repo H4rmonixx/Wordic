@@ -120,6 +120,11 @@ class Game {
         return Math.round((this.#knownWords / totalAnswered) * 100, 2);
     }
 
+    getProgress(){
+        if(this.#words.length == 0) return 0;
+        return Math.round((this.#knownWords + this.#unknownWords) / this.#words.length * 100, 2);
+    }
+
     getWordsToRehearseCount(){
         return this.#words.length - this.#currentWordIndex;
     }

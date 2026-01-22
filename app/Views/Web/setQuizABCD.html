@@ -12,7 +12,7 @@ Quiz
 @endsection
 
 @section("content")
-<main class="container-xxl px-2 px-md-3 px-xxl-0 py-4 my-5">
+<main class="container-xxl px-2 px-md-3 px-xxl-0 py-5">
     <div class="mb-4">
         <nav>
             <ol class="breadcrumb">
@@ -64,6 +64,9 @@ Quiz
         </div>
     </div>
     <div class="card game-section">
+        <div class="progress mb-2">
+            <div class="progress-bar" id="quiz-progress" style="width: 0%;"></div>
+        </div>
         <div class="card-body position-relative">
             <div class="position-absolute top-0 start-0 w-100 h-100 d-flex column-gap-2 justify-content-center align-items-center loading-mask" data-mask="info">
                 <div class="spinner-border"></div>

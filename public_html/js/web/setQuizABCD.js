@@ -65,6 +65,7 @@ function showNextWord(word){
     $("#quiz-answers .answer").removeClass("wrong correct marked loader");
     $(".rehearse-words-number").text(game.getWordsToRehearseCount());
     $(".accuration-words-number").text(game.getAccuracy());
+    $("#quiz-progress").css("width", `${game.getProgress()}%`);
 
     if(word == null){
         $(".game-section").toggleClass("d-none");

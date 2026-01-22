@@ -1,6 +1,3 @@
-main{
-    min-height: 60vh;
-}
 .rehearse-words {
     background-color: var(--bs-warning-bg-subtle);
     color: var(--bs-warning-text-emphasis);
@@ -126,4 +123,10 @@ main{
   100%{
     width: 100%;
   }
+}
+
+.progress{
+  height: 5px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }

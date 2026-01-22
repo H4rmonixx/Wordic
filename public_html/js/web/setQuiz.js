@@ -62,11 +62,12 @@ function loadWords(){
 
 function showNextWord(word){
 
-    $(" input").removeClass("wrong correct");
+    $("#answer-form input").removeClass("wrong correct");
     $("#answer-form .input-group").removeClass("loader");
     $("#correct-ans").addClass("d-none");
     $(".rehearse-words-number").text(game.getWordsToRehearseCount());
     $(".accuration-words-number").text(game.getAccuracy());
+    $("#quiz-progress").css("width", `${game.getProgress()}%`);
 
     if(word == null){
         $(".game-section").toggleClass("d-none");
