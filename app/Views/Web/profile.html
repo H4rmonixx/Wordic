@@ -1,0 +1,53 @@
+@section("title")
+My profile
+@endsection
+
+@section("styles")
+<link rel="stylesheet" href="/css/web/profile.css">
+@endsection
+
+@section("scripts")
+<script src="/js/web/profile.js" defer></script>
+@endsection
+
+@section("content")
+<main class="container-xxl px-2 px-md-3 px-xxl-0 py-5">
+    <div class="mb-4">
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+                <li class="breadcrumb-item active" id="breadcrumb-username">My profile</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="position-relative">
+        <h4 class="mb-3 text-info"><i class="bi bi-card-text"></i> Sets of this author:</h4>
+        <div class="row g-3 mb-3" id="author-sets">
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 text-center text-secondary">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                        <div class="spinner-border text-black"></div>
+                        <div>Loading</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <ul class="pagination justify-content-end" id="pagination-author">
+                <li class="page-item" id="pagination-author-prev">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#"><div class="spinner-border spinner-border-sm text-primary"></div></a></li>
+                <li class="page-item" id="pagination-author-next">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</main>
+@endsection

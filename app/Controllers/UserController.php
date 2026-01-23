@@ -25,23 +25,26 @@ class UserController {
     }
 
     public function pageProfile(Request $request) : bool {
-        // Temporary
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        session_destroy();
-        header('Location: /');
-        exit();
-        
         echo LayoutEngine::resolveWebLayout('profile.html');
+        return true;
+    }
+
+    public function getInfo(Request $request) : bool {
+        header('Content-Type: application/json');
+
+        $data = [
+            "username" => "test123"
+        ];
+        
+        echo json_encode(["success" => true, "message" => "", "info" => $data]);
         return true;
     }
 
     public function getUsername(Request $request) : bool {
         header('Content-Type: application/json');
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
-
         if($request->param('code') == 'current'){
-            echo json_encode(["success" => true, 'username' => $_SESSION['user']['username'] ?? "", 'message' => '']);
+            echo json_encode(["success" => true, 'username' => $request->param("username"), 'message' => '']);
             return true;
         }
 
@@ -51,7 +54,7 @@ class UserController {
             return true;
         }
         
-        echo json_encode(["success" => true, 'username' => "user_" . htmlspecialchars($user_id), 'message' => '']);
+        echo json_encode(["success" => true, 'username' => "", 'message' => '']);
         return true;
     }
 

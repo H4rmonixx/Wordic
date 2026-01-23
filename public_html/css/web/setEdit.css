@@ -1,0 +1,4 @@
+.not-saved-line{
+    background-color: var(--bs-warning);
+    height: 6px;
+}

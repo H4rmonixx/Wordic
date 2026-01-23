@@ -9,6 +9,7 @@ require_once __DIR__ . '/../Middleware/UserAuthMiddleware.php';
 require_once __DIR__ . '/../Middleware/RetrieveIDMiddleware.php';
 require_once __DIR__ . '/../Middleware/SetOwnerOrPublicAuthMiddleware.php';
 require_once __DIR__ . '/../Middleware/SetOwnerAuthMiddleware.php';
+require_once __DIR__ . '/../Middleware/UserExistsMiddleware.php';
 
 use App\Core\Router;
 
@@ -19,6 +20,7 @@ use App\Middleware\UserAuthMiddleware;
 use App\Middleware\RetrieveIDMiddleware;
 use App\Middleware\SetOwnerOrPublicAuthMiddleware;
 use App\Middleware\SetOwnerAuthMiddleware;
+use App\Middleware\UserExistsMiddleware;
 
 $router = new Router();
 
@@ -27,7 +29,14 @@ $router->post('/login/try', [UserController::class, 'login'], [
     // No middleware
 ]);
 $router->post('/user/{code}/username', [UserController::class, 'getUsername'], [
-    RetrieveIDMiddleware::class
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    UserExistsMiddleware::class
+]);
+$router->post('/user/{code}/info', [UserController::class, 'getInfo'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    UserExistsMiddleware::class
 ]);
 
 // SetController

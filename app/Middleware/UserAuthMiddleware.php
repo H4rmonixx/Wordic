@@ -22,6 +22,7 @@ class UserAuthMiddleware
         }
 
         $request->setParam("user_id", $_SESSION['user']['user_id']);
+        $request->setParam("username", $_SESSION['user']['username']);
 
         return $next($request);
     }

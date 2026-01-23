@@ -11,6 +11,7 @@ require_once __DIR__ . '/../Middleware/RetrieveIDMiddleware.php';
 require_once __DIR__ . '/../Middleware/SetOwnerOrPublicAuthMiddleware.php';
 require_once __DIR__ . '/../Middleware/SetOwnerAuthMiddleware.php';
 require_once __DIR__ . '/../Middleware/GuestAuthMiddleware.php';
+require_once __DIR__ . '/../Middleware/UserExistsMiddleware.php';
 
 use App\Core\Router;
 
@@ -24,6 +25,7 @@ use App\Middleware\RetrieveIDMiddleware;
 use App\Middleware\SetOwnerOrPublicAuthMiddleware;
 use App\Middleware\SetOwnerAuthMiddleware;
 use App\Middleware\GuestAuthMiddleware;
+use App\Middleware\UserExistsMiddleware;
 
 $router = new Router();
 
@@ -48,7 +50,12 @@ $router->get('/register', [UserController::class, 'pageRegister'], [
     GuestAuthMiddleware::class
 ]);
 $router->get('/profile', [UserController::class, 'pageProfile'], [
-    UserAuthMiddleware::class
+    UserAuthMiddleware::class,
+]);
+$router->get('/profile/{code}', [UserController::class, 'pageProfile'], [
+    UserAuthMiddleware::class,
+    RetrieveIDMiddleware::class,
+    UserExistsMiddleware::class
 ]);
 
 // SetController

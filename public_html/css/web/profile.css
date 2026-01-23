@@ -1,0 +1,4 @@
+.set-card:hover{
+    cursor: pointer;
+    outline: 1px solid var(--bs-success);
+}

@@ -51,6 +51,15 @@ class User {
         return $user;
     }
 
+    public static function ifExists(int $user_id) : bool {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM `User` WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $data && $data['count'] > 0;
+    }
+
     public static function login(string $username, string $password) : ?User {
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare("SELECT user_id, username, email, password, created_at FROM `User` WHERE username LIKE ?");
